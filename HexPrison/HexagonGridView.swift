@@ -8,11 +8,9 @@
 import SwiftUI
 
 struct HexagonGridView: View {
-    let hexRadius: CGFloat = 20 // Radius of each hexagon (center to vertex)
-    let spacing: CGFloat = 5 // Space between hexagons
-    let onHexagonTapped: ((Int, Int) -> Void)? // Optional callback for hexagon taps
+    let onHexagonTapped: (Hexagon.Index) -> Void
     
-    init(onHexagonTapped: ((Int, Int) -> Void)? = nil) {
+    init(onHexagonTapped: @escaping (Hexagon.Index) -> Void) {
         self.onHexagonTapped = onHexagonTapped
     }
     
@@ -25,9 +23,9 @@ struct HexagonGridView: View {
                 ForEach(0..<rows, id: \.self) { row in
                     ForEach(0..<columns, id: \.self) { column in
                         HexagonButton(
-                            radius: hexRadius,
+                            radius: Hexagon.radius,
                             action: {
-                                onHexagonTapped?(row, column)
+                                onHexagonTapped(.init(row: row, column: column))
                             }
                         )
                         .position(hexPosition(row: row, column: column, in: geometry.size))
@@ -41,8 +39,8 @@ struct HexagonGridView: View {
     private func calculateColumns(in width: CGFloat) -> Int {
         // Horizontal center-to-center distance: flat-to-flat width + spacing
         // Flat-to-flat width = sqrt(3) * radius
-        let horizontalSpacing = hexRadius * sqrt(3) + spacing
-        return max(1, Int((width + spacing) / horizontalSpacing))
+        let horizontalSpacing = Hexagon.radius * sqrt(3) + Hexagon.spacing
+        return max(1, Int((width + Hexagon.spacing) / horizontalSpacing))
     }
     
     // Calculate number of rows that fit in the height
@@ -50,22 +48,22 @@ struct HexagonGridView: View {
         // Vertical center-to-center distance: point-to-point height / 2 + spacing
         // Point-to-point height = 2 * radius, so vertical spacing = radius + spacing
         // Actually for flat-top hexagons: vertical spacing = 1.5 * radius + spacing
-        let verticalSpacing = hexRadius * 1.5 + spacing
-        return max(1, Int((height + spacing) / verticalSpacing))
+        let verticalSpacing = Hexagon.radius * 1.5 + Hexagon.spacing
+        return max(1, Int((height + Hexagon.spacing) / verticalSpacing))
     }
     
     // Calculate position for a hexagon at given row and column
     private func hexPosition(row: Int, column: Int, in size: CGSize) -> CGPoint {
         // Flat-to-flat width of a hexagon
-        let hexWidth = hexRadius * sqrt(3)
+        let hexWidth = Hexagon.radius * sqrt(3)
         // Center-to-center horizontal spacing
-        let horizontalSpacing = hexWidth + spacing
+        let horizontalSpacing = hexWidth + Hexagon.spacing
         // Center-to-center vertical spacing
-        let verticalSpacing = hexRadius * 1.5 + spacing
+        let verticalSpacing = Hexagon.radius * 1.5 + Hexagon.spacing
         
         // Start position: account for hexagon radius so first hex doesn't get clipped
-        let startX = hexWidth / 2 + spacing / 2
-        let startY = hexRadius + spacing / 2
+        let startX = hexWidth / 2 + Hexagon.spacing / 2
+        let startY = Hexagon.radius + Hexagon.spacing / 2
         
         // Offset every other row by half the horizontal spacing for proper hex grid
         let xOffset: CGFloat = row % 2 == 0 ? 0 : horizontalSpacing / 2
@@ -121,8 +119,8 @@ struct HexagonShape: Shape {
 // MARK: - Previews
 
 #Preview {
-    HexagonGridView { row, column in
-        print("Tapped hexagon at row: \(row), column: \(column)")
+    HexagonGridView { index in
+        print("Tapped hexagon at row: \(index.row), column: \(index.column)")
     }
     .background(Color.black)
 }
