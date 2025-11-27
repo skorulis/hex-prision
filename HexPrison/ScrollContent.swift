@@ -27,17 +27,8 @@ extension ScrollContent: View {
     }
     
     private var realContent: some View {
-        VStack(spacing: 20) {
-            // Example SwiftUI button
-            Button(action: { print("Success") }) {
-                Text(title)
-                    .font(.headline)
-                    .foregroundColor(.white)
-                    .padding()
-                    .background(Color.blue)
-                    .cornerRadius(10)
-            }
-            .padding(.top, 40)
+        HexagonGridView { row, column in
+            print("Tapped hexagon at row: \(row), column: \(column)")
         }
         .frame(width: viewPort.size.width, height: viewPort.size.height)
         .border(Color.red)

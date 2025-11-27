@@ -30,6 +30,8 @@ struct ScrollViewWrapper<Content: View>: UIViewRepresentable {
         scrollView.backgroundColor = .systemBackground
         scrollView.showsVerticalScrollIndicator = false
         scrollView.showsHorizontalScrollIndicator = false
+        scrollView.backgroundColor = .black
+        scrollView.contentOffset = config.initialOffset
 
         // Create hosting controller for SwiftUI content
         let hostingController = UIHostingController(rootView: content(.zero(config)))
@@ -42,6 +44,7 @@ struct ScrollViewWrapper<Content: View>: UIViewRepresentable {
         let hostingView = hostingController.view!
         hostingView.translatesAutoresizingMaskIntoConstraints = false
         hostingView.frame = CGRect(origin: .zero, size: .init(width: 1000, height: 1000))
+        hostingView.backgroundColor = .black
         scrollView.addSubview(hostingView)
         
         DispatchQueue.main.async {
@@ -98,10 +101,15 @@ struct ScrollViewWrapperConfig {
     // Total size of the viewPort (not yet implemented)
     let contentSize: CGSize
     
+    // Offset position to start at
+    let initialOffset: CGPoint
+    
     static var `default`: Self {
         .init(
             padding: 0,
             contentSize: .init(width: 10000, height: 10000),
+            initialOffset: .zero,
+            
         )
     }
 }
