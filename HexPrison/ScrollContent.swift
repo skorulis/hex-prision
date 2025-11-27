@@ -11,7 +11,7 @@ import SwiftUI
 // MARK: - Memory footprint
 
 @MainActor struct ScrollContent {
-    let scrollOffset: CGPoint
+    let viewPort: ScrollViewport
 }
 
 // MARK: - Rendering
@@ -19,9 +19,17 @@ import SwiftUI
 extension ScrollContent: View {
     
     var body: some View {
+        if viewPort.size != .zero {
+            realContent
+        } else {
+            EmptyView()
+        }
+    }
+    
+    private var realContent: some View {
         VStack(spacing: 20) {
             // Example SwiftUI button
-            Button(action: { }) {
+            Button(action: { print("Success") }) {
                 Text(title)
                     .font(.headline)
                     .foregroundColor(.white)
@@ -31,17 +39,23 @@ extension ScrollContent: View {
             }
             .padding(.top, 40)
         }
-        .padding()
+        .frame(width: viewPort.size.width, height: viewPort.size.height)
+        .border(Color.red)
     }
     
     private var title: String {
-        "Tap: \(Int(scrollOffset.x)), \(Int(scrollOffset.y))"
+        "Tap: \(Int(viewPort.center.x)), \(Int(viewPort.center.y))"
     }
 }
 
 // MARK: - Previews
 
 #Preview {
-    ScrollContent(scrollOffset: .zero)
+    ScrollContent(
+        viewPort: .init(
+            offset: .zero,
+            size: .init(width: 400, height: 400),
+        )
+    )
 }
 
