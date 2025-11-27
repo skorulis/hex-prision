@@ -27,7 +27,7 @@ extension ScrollContent: View {
     }
     
     private var realContent: some View {
-        HexagonGridView { index in
+        HexagonGridView(offset: .init(x: -viewPort.offset.x, y: -viewPort.offset.y)) { index in
             print("Tapped hexagon at row: \(index.row), column: \(index.column)")
         }
         .frame(width: viewPort.size.width, height: viewPort.size.height)

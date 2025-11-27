@@ -8,52 +8,96 @@
 import SwiftUI
 
 struct HexagonGridView: View {
+    let offset: CGPoint
     let onHexagonTapped: (Hexagon.Index) -> Void
     
-    init(onHexagonTapped: @escaping (Hexagon.Index) -> Void) {
+    init(offset: CGPoint, onHexagonTapped: @escaping (Hexagon.Index) -> Void) {
+        self.offset = offset
         self.onHexagonTapped = onHexagonTapped
     }
     
     var body: some View {
         GeometryReader { geometry in
-            let columns = calculateColumns(in: geometry.size.width)
-            let rows = calculateRows(in: geometry.size.height)
+            let visibleRange = calculateVisibleRange(viewportSize: geometry.size, offset: offset)
             
             ZStack {
-                ForEach(0..<rows, id: \.self) { row in
-                    ForEach(0..<columns, id: \.self) { column in
+                ForEach(visibleRange.rows, id: \.self) { row in
+                    ForEach(visibleRange.columns, id: \.self) { column in
                         HexagonButton(
                             radius: Hexagon.radius,
                             action: {
                                 onHexagonTapped(.init(row: row, column: column))
                             }
                         )
-                        .position(hexPosition(row: row, column: column, in: geometry.size))
+                        .position(hexPosition(row: row, column: column, offset: offset, in: geometry.size))
                     }
                 }
             }
         }
     }
     
-    // Calculate number of columns that fit in the width
-    private func calculateColumns(in width: CGFloat) -> Int {
-        // Horizontal center-to-center distance: flat-to-flat width + spacing
-        // Flat-to-flat width = sqrt(3) * radius
-        let horizontalSpacing = Hexagon.radius * sqrt(3) + Hexagon.spacing
-        return max(1, Int((width + Hexagon.spacing) / horizontalSpacing))
+    // Visible range of hexagons
+    private struct VisibleRange {
+        let rows: Range<Int>
+        let columns: Range<Int>
     }
     
-    // Calculate number of rows that fit in the height
-    private func calculateRows(in height: CGFloat) -> Int {
-        // Vertical center-to-center distance: point-to-point height / 2 + spacing
-        // Point-to-point height = 2 * radius, so vertical spacing = radius + spacing
-        // Actually for flat-top hexagons: vertical spacing = 1.5 * radius + spacing
+    // Calculate which hexagons are visible in the viewport
+    private func calculateVisibleRange(viewportSize: CGSize, offset: CGPoint) -> VisibleRange {
+        let hexWidth = Hexagon.radius * sqrt(3)
+        let horizontalSpacing = hexWidth + Hexagon.spacing
         let verticalSpacing = Hexagon.radius * 1.5 + Hexagon.spacing
-        return max(1, Int((height + Hexagon.spacing) / verticalSpacing))
+        
+        // Convert viewport bounds to world coordinates
+        // Viewport is at screen position (0, 0) with size viewportSize
+        // World coordinates = screen coordinates - offset
+        let worldMinX = -offset.x
+        let worldMinY = -offset.y
+        let worldMaxX = worldMinX + viewportSize.width
+        let worldMaxY = worldMinY + viewportSize.height
+        
+        // Find the hexagon indices that cover this world coordinate range
+        // Account for hexagon size by expanding the range
+        let hexRadius = Hexagon.radius
+        let expandedMinX = worldMinX - hexRadius
+        let expandedMinY = worldMinY - hexRadius
+        let expandedMaxX = worldMaxX + hexRadius
+        let expandedMaxY = worldMaxY + hexRadius
+        
+        let startColumn = pixelToColumn(x: expandedMinX, horizontalSpacing: horizontalSpacing)
+        let startRow = pixelToRow(y: expandedMinY, verticalSpacing: verticalSpacing)
+        let endColumn = pixelToColumn(x: expandedMaxX, horizontalSpacing: horizontalSpacing) + 1
+        let endRow = pixelToRow(y: expandedMaxY, verticalSpacing: verticalSpacing) + 1
+        
+        // Ensure ranges are valid (start <= end)
+        let clampedStartColumn = min(startColumn, endColumn)
+        let clampedEndColumn = max(startColumn, endColumn)
+        let clampedStartRow = min(startRow, endRow)
+        let clampedEndRow = max(startRow, endRow)
+        
+        return VisibleRange(
+            rows: clampedStartRow..<clampedEndRow,
+            columns: clampedStartColumn..<clampedEndColumn
+        )
     }
     
-    // Calculate position for a hexagon at given row and column
-    private func hexPosition(row: Int, column: Int, in size: CGSize) -> CGPoint {
+    // Convert pixel X position (in world coordinates) to hexagon column index
+    private func pixelToColumn(x: CGFloat, horizontalSpacing: CGFloat) -> Int {
+        let hexWidth = Hexagon.radius * sqrt(3)
+        // Account for the initial grid offset
+        let adjustedX = x - (hexWidth / 2 + Hexagon.spacing / 2)
+        return Int(floor(adjustedX / horizontalSpacing))
+    }
+    
+    // Convert pixel Y position (in world coordinates) to hexagon row index
+    private func pixelToRow(y: CGFloat, verticalSpacing: CGFloat) -> Int {
+        // Account for the initial grid offset
+        let adjustedY = y - (Hexagon.radius + Hexagon.spacing / 2)
+        return Int(floor(adjustedY / verticalSpacing))
+    }
+    
+    // Calculate position for a hexagon at given row and column, accounting for offset
+    private func hexPosition(row: Int, column: Int, offset: CGPoint, in size: CGSize) -> CGPoint {
         // Flat-to-flat width of a hexagon
         let hexWidth = Hexagon.radius * sqrt(3)
         // Center-to-center horizontal spacing
@@ -68,10 +112,12 @@ struct HexagonGridView: View {
         // Offset every other row by half the horizontal spacing for proper hex grid
         let xOffset: CGFloat = row % 2 == 0 ? 0 : horizontalSpacing / 2
         
-        let x = startX + CGFloat(column) * horizontalSpacing + xOffset
-        let y = startY + CGFloat(row) * verticalSpacing
+        // Calculate base position
+        let baseX = startX + CGFloat(column) * horizontalSpacing + xOffset
+        let baseY = startY + CGFloat(row) * verticalSpacing
         
-        return CGPoint(x: x, y: y)
+        // Apply the offset to move the grid
+        return CGPoint(x: baseX + offset.x, y: baseY + offset.y)
     }
 }
 
@@ -119,7 +165,7 @@ struct HexagonShape: Shape {
 // MARK: - Previews
 
 #Preview {
-    HexagonGridView { index in
+    HexagonGridView(offset: .zero) { index in
         print("Tapped hexagon at row: \(index.row), column: \(index.column)")
     }
     .background(Color.black)
