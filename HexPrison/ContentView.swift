@@ -9,6 +9,7 @@ import SwiftUI
 
 struct ContentView: View {
     @State private var scrollOffset: CGPoint = .zero
+    @State private var buttonTapCount: Int = 0
     
     var body: some View {
         VStack {
@@ -22,13 +23,18 @@ struct ContentView: View {
                 Text("Y: \(Int(scrollOffset.y))")
                     .font(.body)
                     .foregroundColor(.secondary)
+                Text("Button Taps: \(buttonTapCount)")
+                    .font(.body)
+                    .foregroundColor(.secondary)
             }
             .padding()
             .frame(maxWidth: .infinity, alignment: .leading)
             .background(Color(.systemGray5))
             
-            // ScrollView wrapper
-            ScrollViewWrapper(scrollOffset: $scrollOffset)
+            // ScrollView wrapper with SwiftUI content
+            ScrollViewWrapper(scrollOffset: $scrollOffset) { offset in
+                ScrollContent(scrollOffset: offset)
+            }
         }
     }
 }

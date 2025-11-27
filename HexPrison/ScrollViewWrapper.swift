@@ -8,39 +8,41 @@
 import SwiftUI
 import UIKit
 
-struct ScrollViewWrapper: UIViewRepresentable {
+struct ScrollViewWrapper<Content: View>: UIViewRepresentable {
     @Binding var scrollOffset: CGPoint
+    let content: (CGPoint) -> Content
+    
+    init(scrollOffset: Binding<CGPoint>, @ViewBuilder content: @escaping (CGPoint) -> Content) {
+        self._scrollOffset = scrollOffset
+        self.content = content
+    }
     
     func makeUIView(context: Context) -> UIScrollView {
         let scrollView = UIScrollView()
         scrollView.delegate = context.coordinator
-        scrollView.contentSize = CGSize(width: 1000, height: 1000)
+        scrollView.contentSize = CGSize(width: 10000, height: 10000)
         scrollView.backgroundColor = .systemBackground
         scrollView.showsVerticalScrollIndicator = false
         scrollView.showsHorizontalScrollIndicator = false
+
+        // Create hosting controller for SwiftUI content
+        let hostingController = UIHostingController(rootView: content(.zero))
+        hostingController.view.backgroundColor = .clear
         
-        // Add a simple view to visualize the scrollable content
-        let contentView = UIView()
-        contentView.backgroundColor = .systemGray6
-        contentView.frame = CGRect(origin: .zero, size: scrollView.contentSize)
-        scrollView.addSubview(contentView)
+        // Store hosting controller in coordinator
+        context.coordinator.hostingController = hostingController
         
-        // Add some visual markers to see scrolling
-        for i in 0..<10 {
-            let marker = UIView(frame: CGRect(x: CGFloat(i * 100), y: 0, width: 2, height: 1000))
-            marker.backgroundColor = .systemBlue
-            contentView.addSubview(marker)
-            
-            let marker2 = UIView(frame: CGRect(x: 0, y: CGFloat(i * 100), width: 1000, height: 2))
-            marker2.backgroundColor = .systemBlue
-            contentView.addSubview(marker2)
-        }
+        // Add hosting controller's view to scroll view
+        let hostingView = hostingController.view!
+        hostingView.translatesAutoresizingMaskIntoConstraints = false
+        hostingView.frame = CGRect(origin: .zero, size: .init(width: 1000, height: 1000))
+        scrollView.addSubview(hostingView)
         
         return scrollView
     }
     
     func updateUIView(_ uiView: UIScrollView, context: Context) {
-        // Update if needed
+        // Update the hosting controller's root view
     }
     
     func makeCoordinator() -> Coordinator {
@@ -49,6 +51,7 @@ struct ScrollViewWrapper: UIViewRepresentable {
     
     class Coordinator: NSObject, UIScrollViewDelegate {
         var parent: ScrollViewWrapper
+        var hostingController: UIHostingController<Content>?
         
         init(_ parent: ScrollViewWrapper) {
             self.parent = parent
@@ -56,6 +59,7 @@ struct ScrollViewWrapper: UIViewRepresentable {
         
         func scrollViewDidScroll(_ scrollView: UIScrollView) {
             parent.scrollOffset = scrollView.contentOffset
+            hostingController?.rootView = parent.content(scrollView.contentOffset)
         }
     }
 }
