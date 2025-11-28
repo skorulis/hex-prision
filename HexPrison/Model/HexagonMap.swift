@@ -6,6 +6,11 @@ import Foundation
 struct HexagonMap {
     
     func get(index: Hexagon.Index) -> Hexagon {
-        .init(type: .basic, index: index)
+        let hashMod = abs(index.hashValue) % 100
+        if hashMod >= 99 {
+            return .init(type: .permanent, index: index)
+        }
+        
+        return .init(type: .basic, index: index)
     }
 }

@@ -4,9 +4,15 @@ import SwiftUI
 
 struct HexagonGridView: View {
     let offset: CGPoint
+    let map: HexagonMap
     let onHexagonTapped: (Hexagon.Index) -> Void
     
-    init(offset: CGPoint, onHexagonTapped: @escaping (Hexagon.Index) -> Void) {
+    init(
+        map: HexagonMap,
+        offset: CGPoint,
+        onHexagonTapped: @escaping (Hexagon.Index) -> Void
+    ) {
+        self.map = map
         self.offset = offset
         self.onHexagonTapped = onHexagonTapped
     }
@@ -27,7 +33,7 @@ struct HexagonGridView: View {
                         )
                         
                         HexagonButton(
-                            index: .init(row: row, column: column),
+                            hexagon: map.get(index: .init(row: row, column: column)),
                             dimming: dimming,
                             action: onHexagonTapped,
                         )
@@ -124,7 +130,7 @@ struct HexagonGridView: View {
 // MARK: - Previews
 
 #Preview {
-    HexagonGridView(offset: .zero) { index in
+    HexagonGridView(map: .init(), offset: .zero) { index in
         print("Tapped hexagon at row: \(index.row), column: \(index.column)")
     }
     .background(Color.black)

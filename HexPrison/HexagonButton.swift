@@ -10,7 +10,7 @@ import SwiftUI
 
 // Hexagon button view
 struct HexagonButton: View {
-    let index: Hexagon.Index
+    let hexagon: Hexagon
     let dimming: CGFloat
     let action: (Hexagon.Index) -> Void
     
@@ -29,12 +29,12 @@ struct HexagonButton: View {
         ZStack {
             // Front side
             HexagonShape(radius: Hexagon.radius)
-                .fill(Hexagon.color(index: index))
+                .fill(hexagon.type.color)
                 .opacity(isFlipped ? 0 : 1)
             
             // Back side (flipped) - rotated 180 degrees on Y axis
             HexagonShape(radius: Hexagon.radius)
-                .fill(Hexagon.color(index: index).opacity(0.5))
+                .fill(hexagon.type.color.opacity(0.5))
                 .scaleEffect(x: -1, y: 1) // Mirror horizontally for back side
                 .opacity(isFlipped ? 1 : 0)
         }
@@ -50,7 +50,7 @@ struct HexagonButton: View {
         withAnimation(.spring(response: 0.6, dampingFraction: 0.7)) {
             isFlipped.toggle()
         }
-        action(index)
+        action(hexagon.index)
     }
     
 }
