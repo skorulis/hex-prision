@@ -88,16 +88,15 @@ struct ScrollViewWrapper<Content: View>: UIViewRepresentable {
         }
         
         func scrollViewDidScroll(_ scrollView: UIScrollView) {
-            parent.scrollOffset = scrollView.contentOffset
-            updateViewport(scrollView: scrollView)
+            DispatchQueue.main.async { [unowned self] in
+                self.parent.scrollOffset = scrollView.contentOffset
+                self.updateViewport(scrollView: scrollView)
+            }
         }
     }
 }
 
 struct ScrollViewWrapperConfig {
-    // Padding applied to the size of the content viewPort
-    let padding: CGFloat
-    
     // Total size of the viewPort (not yet implemented)
     let contentSize: CGSize
     
@@ -106,10 +105,8 @@ struct ScrollViewWrapperConfig {
     
     static var `default`: Self {
         .init(
-            padding: 0,
-            contentSize: .init(width: 10000, height: 10000),
-            initialOffset: .zero,
-            
+            contentSize: .init(width: 1_000_000, height: 1_000_000),
+            initialOffset: .init(x: 500_000, y: 500_000),
         )
     }
 }
