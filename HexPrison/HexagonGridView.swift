@@ -20,7 +20,6 @@ struct HexagonGridView: View {
         GeometryReader { geometry in
             let visibleRange = calculateVisibleRange(viewportSize: geometry.size, offset: offset)
             let viewportCenter = CGPoint(x: geometry.size.width / 2, y: geometry.size.height / 2)
-            let maxDistance = sqrt(pow(geometry.size.width / 2, 2) + pow(geometry.size.height / 2, 2))
             
             ZStack {
                 ForEach(visibleRange.rows, id: \.self) { row in
@@ -29,7 +28,7 @@ struct HexagonGridView: View {
                         let sphereEffect = calculateSphereEffect(
                             position: position,
                             viewportCenter: viewportCenter,
-                            maxDistance: maxDistance
+                            frameSize: geometry.size,
                         )
                         
                         HexagonButton(
@@ -154,8 +153,10 @@ struct HexagonGridView: View {
     private func calculateSphereEffect(
         position: CGPoint,
         viewportCenter: CGPoint,
-        maxDistance: CGFloat
+        frameSize: CGSize,
     ) -> SphereEffect {
+        let maxDistance = sqrt(pow(frameSize.width / 2, 2) + pow(frameSize.height / 2, 2))
+        
         // Calculate distance from center
         let dx = position.x - viewportCenter.x
         let dy = position.y - viewportCenter.y
@@ -163,9 +164,6 @@ struct HexagonGridView: View {
         
         // Normalize distance (0 = center, 1 = edge)
         let normalizedDistance = min(distance / maxDistance, 1.0)
-        
-        // Calculate angle for rotation
-        let angle = atan2(dy, dx)
         
         // Sphere curvature effect: stronger near edges
         // Use a smooth curve (ease-in-out) for more natural look
