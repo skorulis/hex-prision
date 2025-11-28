@@ -25,6 +25,7 @@ struct ScrollViewWrapper<Content: View>: UIViewRepresentable {
     
     func makeUIView(context: Context) -> UIScrollView {
         let scrollView = UIScrollView()
+        scrollView.scrollsToTop = false
         scrollView.delegate = context.coordinator
         scrollView.contentSize = config.contentSize
         scrollView.backgroundColor = .systemBackground

@@ -10,8 +10,16 @@ struct Hexagon {
         let column: Int
     }
     
+    // Visible range of hexagons
+    struct VisibleRange {
+        let rows: Range<Int>
+        let columns: Range<Int>
+    }
+    
     // Radius of each hexagon (center to vertex)
     static let radius: CGFloat = 30
+    
+    static let width = Hexagon.radius * sqrt(3)
     
     // Space between hexagons
     static let spacing: CGFloat = 6
