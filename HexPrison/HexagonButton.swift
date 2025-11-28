@@ -14,15 +14,43 @@ struct HexagonButton: View {
     let dimming: CGFloat
     let action: (Hexagon.Index) -> Void
     
+    @State private var isFlipped = false
+    
     var body: some View {
-        Button(action: { action(index) }) {
-            HexagonShape(radius: Hexagon.radius)
-                .fill(Hexagon.color(index: index))
-                .frame(width: Hexagon.radius * 2, height: Hexagon.radius * 2)
+        Button(action: onPress) {
+            content
         }
         .buttonStyle(PlainButtonStyle())
         .scaleEffect(1 - dimming * 0.4)
         .brightness(-dimming * 0.9)
+    }
+    
+    private var content: some View {
+        ZStack {
+            // Front side
+            HexagonShape(radius: Hexagon.radius)
+                .fill(Hexagon.color(index: index))
+                .opacity(isFlipped ? 0 : 1)
+            
+            // Back side (flipped) - rotated 180 degrees on Y axis
+            HexagonShape(radius: Hexagon.radius)
+                .fill(Hexagon.color(index: index).opacity(0.5))
+                .scaleEffect(x: -1, y: 1) // Mirror horizontally for back side
+                .opacity(isFlipped ? 1 : 0)
+        }
+        .frame(width: Hexagon.radius * 2, height: Hexagon.radius * 2)
+        .rotation3DEffect(
+            .degrees(isFlipped ? 180 : 0),
+            axis: (x: 0, y: 1, z: 0),
+            perspective: 0.5
+        )
+    }
+    
+    private func onPress() {
+        withAnimation(.spring(response: 0.6, dampingFraction: 0.7)) {
+            isFlipped.toggle()
+        }
+        action(index)
     }
     
 }
