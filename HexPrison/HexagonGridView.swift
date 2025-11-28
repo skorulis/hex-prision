@@ -19,17 +19,39 @@ struct HexagonGridView: View {
     var body: some View {
         GeometryReader { geometry in
             let visibleRange = calculateVisibleRange(viewportSize: geometry.size, offset: offset)
+            let viewportCenter = CGPoint(x: geometry.size.width / 2, y: geometry.size.height / 2)
+            let maxDistance = sqrt(pow(geometry.size.width / 2, 2) + pow(geometry.size.height / 2, 2))
             
             ZStack {
                 ForEach(visibleRange.rows, id: \.self) { row in
                     ForEach(visibleRange.columns, id: \.self) { column in
+                        let position = hexPosition(row: row, column: column, offset: offset, in: geometry.size)
+                        let sphereEffect = calculateSphereEffect(
+                            position: position,
+                            viewportCenter: viewportCenter,
+                            maxDistance: maxDistance
+                        )
+                        
                         HexagonButton(
                             radius: Hexagon.radius,
                             action: {
                                 onHexagonTapped(.init(row: row, column: column))
                             }
                         )
-                        .position(hexPosition(row: row, column: column, offset: offset, in: geometry.size))
+                        .scaleEffect(sphereEffect.scale)
+                        .rotation3DEffect(
+                            .degrees(sphereEffect.rotationX),
+                            axis: (x: 1, y: 0, z: 0),
+                            perspective: 0.5
+                        )
+                        .rotation3DEffect(
+                            .degrees(sphereEffect.rotationY),
+                            axis: (x: 0, y: 1, z: 0),
+                            perspective: 0.5
+                        )
+                        .opacity(sphereEffect.opacity)
+                        .brightness(sphereEffect.brightness)
+                        .position(position)
                     }
                 }
             }
@@ -118,6 +140,62 @@ struct HexagonGridView: View {
         
         // Apply the offset to move the grid
         return CGPoint(x: baseX + offset.x, y: baseY + offset.y)
+    }
+    
+    // Calculate sphere effect parameters based on distance from viewport center
+    private struct SphereEffect {
+        let scale: CGFloat
+        let rotationX: CGFloat
+        let rotationY: CGFloat
+        let opacity: CGFloat
+        let brightness: CGFloat
+    }
+    
+    private func calculateSphereEffect(
+        position: CGPoint,
+        viewportCenter: CGPoint,
+        maxDistance: CGFloat
+    ) -> SphereEffect {
+        // Calculate distance from center
+        let dx = position.x - viewportCenter.x
+        let dy = position.y - viewportCenter.y
+        let distance = sqrt(dx * dx + dy * dy)
+        
+        // Normalize distance (0 = center, 1 = edge)
+        let normalizedDistance = min(distance / maxDistance, 1.0)
+        
+        // Calculate angle for rotation
+        let angle = atan2(dy, dx)
+        
+        // Sphere curvature effect: stronger near edges
+        // Use a smooth curve (ease-in-out) for more natural look
+        let curvature = normalizedDistance * normalizedDistance
+        
+        // Scale: hexagons get smaller as they approach edges
+        // Range from 1.0 (center) to 0.6 (edge)
+        let scale = 1.0 - (curvature * 0.4)
+        
+        // Rotation: tilt hexagons based on their position relative to center
+        // Maximum rotation of 45 degrees at edges
+        let maxRotation: CGFloat = 45
+        let rotationX = -dy / maxDistance * maxRotation * curvature
+        let rotationY = dx / maxDistance * maxRotation * curvature
+        
+        // Opacity: slightly fade hexagons near edges for depth
+        // Range from 1.0 (center) to 0.7 (edge)
+        let opacity = 1.0 - (curvature * 0.3)
+        
+        // Brightness: darken hexagons near edges to simulate shadow
+        // Range from 0.0 (center) to -0.2 (edge)
+        let brightness = -curvature * 0.2
+        
+        return SphereEffect(
+            scale: scale,
+            rotationX: rotationX,
+            rotationY: rotationY,
+            opacity: opacity,
+            brightness: brightness
+        )
     }
 }
 

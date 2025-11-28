@@ -31,7 +31,6 @@ extension ScrollContent: View {
             print("Tapped hexagon at row: \(index.row), column: \(index.column)")
         }
         .frame(width: viewPort.size.width, height: viewPort.size.height)
-        .border(Color.red)
     }
     
     private var title: String {
