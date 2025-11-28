@@ -11,6 +11,7 @@ import SwiftUI
 // Hexagon button view
 struct HexagonButton: View {
     let index: Hexagon.Index
+    let dimming: CGFloat
     let action: (Hexagon.Index) -> Void
     
     var body: some View {
@@ -20,7 +21,10 @@ struct HexagonButton: View {
                 .frame(width: Hexagon.radius * 2, height: Hexagon.radius * 2)
         }
         .buttonStyle(PlainButtonStyle())
+        .scaleEffect(1 - dimming * 0.4)
+        .brightness(-dimming * 0.9)
     }
+    
 }
 
 // Hexagon shape

@@ -18,14 +18,14 @@ struct HexagonGridView: View {
     
     var body: some View {
         GeometryReader { geometry in
-            let visibleRange = calculateVisibleRange(viewportSize: geometry.size, offset: offset)
+            let visibleRange = calculateVisibleRange(viewportSize: geometry.size)
             let viewportCenter = CGPoint(x: geometry.size.width / 2, y: geometry.size.height / 2)
             
             ZStack {
                 ForEach(visibleRange.rows, id: \.self) { row in
                     ForEach(visibleRange.columns, id: \.self) { column in
-                        let position = hexPosition(row: row, column: column, offset: offset, in: geometry.size)
-                        let sphereEffect = calculateSphereEffect(
+                        let position = hexPosition(row: row, column: column, in: geometry.size)
+                        let dimming = calculateDimming(
                             position: position,
                             viewportCenter: viewportCenter,
                             frameSize: geometry.size,
@@ -33,21 +33,9 @@ struct HexagonGridView: View {
                         
                         HexagonButton(
                             index: .init(row: row, column: column),
+                            dimming: dimming,
                             action: onHexagonTapped,
                         )
-                        .scaleEffect(sphereEffect.scale)
-                        .rotation3DEffect(
-                            .degrees(sphereEffect.rotationX),
-                            axis: (x: 1, y: 0, z: 0),
-                            perspective: 0.5
-                        )
-                        .rotation3DEffect(
-                            .degrees(sphereEffect.rotationY),
-                            axis: (x: 0, y: 1, z: 0),
-                            perspective: 0.5
-                        )
-                        .opacity(sphereEffect.opacity)
-                        .brightness(sphereEffect.brightness)
                         .position(position)
                     }
                 }
@@ -62,7 +50,7 @@ struct HexagonGridView: View {
     }
     
     // Calculate which hexagons are visible in the viewport
-    private func calculateVisibleRange(viewportSize: CGSize, offset: CGPoint) -> VisibleRange {
+    private func calculateVisibleRange(viewportSize: CGSize) -> VisibleRange {
         let hexWidth = Hexagon.radius * sqrt(3)
         let horizontalSpacing = hexWidth + Hexagon.spacing
         let verticalSpacing = Hexagon.radius * 1.5 + Hexagon.spacing
@@ -116,7 +104,7 @@ struct HexagonGridView: View {
     }
     
     // Calculate position for a hexagon at given row and column, accounting for offset
-    private func hexPosition(row: Int, column: Int, offset: CGPoint, in size: CGSize) -> CGPoint {
+    private func hexPosition(row: Int, column: Int, in size: CGSize) -> CGPoint {
         // Flat-to-flat width of a hexagon
         let hexWidth = Hexagon.radius * sqrt(3)
         // Center-to-center horizontal spacing
@@ -142,56 +130,21 @@ struct HexagonGridView: View {
     // Calculate sphere effect parameters based on distance from viewport center
     private struct SphereEffect {
         let scale: CGFloat
-        let rotationX: CGFloat
-        let rotationY: CGFloat
-        let opacity: CGFloat
         let brightness: CGFloat
     }
     
-    private func calculateSphereEffect(
+    private func calculateDimming(
         position: CGPoint,
         viewportCenter: CGPoint,
         frameSize: CGSize,
-    ) -> SphereEffect {
-        let maxDistance = sqrt(pow(frameSize.width / 2, 2) + pow(frameSize.height / 2, 2))
-        
+    ) -> CGFloat {
         // Calculate distance from center
-        let dx = position.x - viewportCenter.x
-        let dy = position.y - viewportCenter.y
-        let distance = sqrt(dx * dx + dy * dy)
+        let dx = abs(position.x - viewportCenter.x) / frameSize.width
+        let dy = abs(position.y - viewportCenter.y) / frameSize.height
+        let maxDistance = max(dx, dy)
         
-        // Normalize distance (0 = center, 1 = edge)
-        let normalizedDistance = min(distance / maxDistance, 1.0)
-        
-        // Sphere curvature effect: stronger near edges
         // Use a smooth curve (ease-in-out) for more natural look
-        let curvature = normalizedDistance * normalizedDistance
-        
-        // Scale: hexagons get smaller as they approach edges
-        // Range from 1.0 (center) to 0.6 (edge)
-        let scale = 1.0 - (curvature * 0.4)
-        
-        // Rotation: tilt hexagons based on their position relative to center
-        // Maximum rotation of 45 degrees at edges
-        let maxRotation: CGFloat = 45
-        let rotationX = -dy / maxDistance * maxRotation * curvature
-        let rotationY = dx / maxDistance * maxRotation * curvature
-        
-        // Opacity: slightly fade hexagons near edges for depth
-        // Range from 1.0 (center) to 0.7 (edge)
-        let opacity = 1.0 - (curvature * 0.3)
-        
-        // Brightness: darken hexagons near edges to simulate shadow
-        // Range from 0.0 (center) to -0.2 (edge)
-        let brightness = -curvature * 0.2
-        
-        return SphereEffect(
-            scale: scale,
-            rotationX: rotationX,
-            rotationY: rotationY,
-            opacity: opacity,
-            brightness: brightness
-        )
+        return maxDistance * maxDistance
     }
 }
 

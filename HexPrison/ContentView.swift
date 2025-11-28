@@ -14,7 +14,7 @@ struct ContentView: View {
         VStack(spacing: 0) {
             // Label showing current scroll offset
             VStack(alignment: .leading, spacing: 8) {
-                Text("Scroll Position: X: \(Int(scrollOffset.x)), Y: \(Int(scrollOffset.y))")
+                Text("Scroll Position\nX: \(Int(scrollOffset.x)), Y: \(Int(scrollOffset.y))")
                     .font(.headline)
             }
             .padding()
