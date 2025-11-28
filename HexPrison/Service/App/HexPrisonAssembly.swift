@@ -26,6 +26,7 @@ final class HexPrisonAssembly: AutoInitModuleAssembly {
     @MainActor
     private func registerViewModels(container: Container<TargetResolver>) {
         container.register(ContentViewModel.self) { ContentViewModel.make(resolver: $0) }
+        container.register(HexagonMapViewModel.self) { HexagonMapViewModel.make(resolver: $0) }
     }
 }
 

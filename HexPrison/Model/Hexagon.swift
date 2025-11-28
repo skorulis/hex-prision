@@ -7,6 +7,7 @@ struct Hexagon {
     
     let type: HexagonType
     let index: Index
+    let flipped: Bool
     
     // Radius of each hexagon (center to vertex)
     static let radius: CGFloat = 30
@@ -18,9 +19,22 @@ struct Hexagon {
 }
 
 extension Hexagon {
-    struct Index: Hashable {
+    struct Index: Hashable, Identifiable {
         let row: Int
         let column: Int
+        
+        /// Stable, deterministic hash independent of Swift's randomised hasher.
+        /// Use this whenever the hash must be the same between application runs.
+        var stableHashValue: Int {
+            var hash = 17
+            hash = hash &* 31 &+ row
+            hash = hash &* 31 &+ column
+            return hash
+        }
+        
+        var id: String {
+            "\(row)-\(column)"
+        }
     }
     
     // Visible range of hexagons

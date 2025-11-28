@@ -7,11 +7,11 @@ import SwiftUI
 
 @Observable final class ContentViewModel {
     
-    let mapStore: MapStore
+    let mapViewModel: HexagonMapViewModel
     
     @Resolvable<BaseResolver>
-    init(mapStore: MapStore) {
-        self.mapStore = mapStore
+    init(mapViewModel: HexagonMapViewModel) {
+        self.mapViewModel = mapViewModel
     }
 }
 

@@ -1,17 +1,19 @@
 //  Created by Alexander Skorulis on 28/11/2025.
 
 import Foundation
+import Knit
 import SwiftUI
 
 // MARK: - Memory footprint
 
-@MainActor struct ScrollContent {
+@MainActor struct HexagonMapView {
+    @State var viewModel: HexagonMapViewModel
     let viewPort: ScrollViewport
 }
 
 // MARK: - Rendering
 
-extension ScrollContent: View {
+extension HexagonMapView: View {
     
     var body: some View {
         if viewPort.size != .zero {
@@ -23,9 +25,10 @@ extension ScrollContent: View {
     
     private var realContent: some View {
         HexagonGridView(
-            map: .init(),
+            map: viewModel.map,
             offset: .init(x: viewPort.offset.x, y: viewPort.offset.y)
         ) { index in
+            viewModel.toggle(index: index)
             print("Tapped hexagon at row: \(index.row), column: \(index.column)")
         }
         .frame(width: viewPort.size.width, height: viewPort.size.height)
@@ -39,11 +42,13 @@ extension ScrollContent: View {
 // MARK: - Previews
 
 #Preview {
-    ScrollContent(
+    let assembler = HexPrisonAssembly.testing()
+    HexagonMapView(
+        viewModel: assembler.resolver.hexagonMapViewModel(),
         viewPort: .init(
             offset: .zero,
             size: .init(width: 400, height: 400),
-        )
+        ),
     )
 }
 

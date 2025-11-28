@@ -29,7 +29,7 @@ struct ContentView: View {
                 config: .default,
                 scrollOffset: $scrollOffset
             ) { offset in
-                ScrollContent(viewPort: offset)
+                HexagonMapView(viewModel: viewModel.mapViewModel, viewPort: offset)
             }
             .ignoresSafeArea()
         }

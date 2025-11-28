@@ -1,9 +1,4 @@
-//
-//  HexagonButton.swift
-//  HexPrison
-//
 //  Created by Alexander Skorulis on 28/11/2025.
-//
 
 import Foundation
 import SwiftUI
@@ -13,8 +8,6 @@ struct HexagonButton: View {
     let hexagon: Hexagon
     let dimming: CGFloat
     let action: (Hexagon.Index) -> Void
-    
-    @State private var isFlipped = false
     
     var body: some View {
         Button(action: onPress) {
@@ -30,26 +23,24 @@ struct HexagonButton: View {
             // Front side
             HexagonShape(radius: Hexagon.radius)
                 .fill(hexagon.type.color)
-                .opacity(isFlipped ? 0 : 1)
+                .opacity(hexagon.flipped ? 0 : 1)
             
             // Back side (flipped) - rotated 180 degrees on Y axis
             HexagonShape(radius: Hexagon.radius)
                 .fill(hexagon.type.color.opacity(0.5))
                 .scaleEffect(x: -1, y: 1) // Mirror horizontally for back side
-                .opacity(isFlipped ? 1 : 0)
+                .opacity(hexagon.flipped ? 1 : 0)
         }
         .frame(width: Hexagon.radius * 2, height: Hexagon.radius * 2)
         .rotation3DEffect(
-            .degrees(isFlipped ? 180 : 0),
+            .degrees(hexagon.flipped ? 180 : 0),
             axis: (x: 0, y: 1, z: 0),
             perspective: 0.5
         )
+        .animation(.spring(response: 0.6, dampingFraction: 0.7), value: hexagon.flipped)
     }
     
     private func onPress() {
-        withAnimation(.spring(response: 0.6, dampingFraction: 0.7)) {
-            isFlipped.toggle()
-        }
         action(hexagon.index)
     }
     
