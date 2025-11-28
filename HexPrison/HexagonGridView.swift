@@ -1,9 +1,4 @@
-//
-//  HexagonGridView.swift
-//  HexPrison
-//
 //  Created by Alexander Skorulis on 28/11/2025.
-//
 
 import SwiftUI
 
@@ -50,7 +45,7 @@ struct HexagonGridView: View {
         
         // Convert viewport bounds to world coordinates
         let worldFrame = CGRect(
-            origin: .init(x: -offset.x, y: -offset.y),
+            origin: .init(x: offset.x, y: offset.y),
             size: .init(width: viewportSize.width, height: viewportSize.height),
         )
         // Add extra padding so the edge isn't visible
@@ -108,7 +103,7 @@ struct HexagonGridView: View {
         let baseY = startY + CGFloat(row) * verticalSpacing
         
         // Apply the offset to move the grid
-        return CGPoint(x: baseX + offset.x, y: baseY + offset.y)
+        return CGPoint(x: baseX - offset.x, y: baseY - offset.y)
     }
     
     private func calculateDimming(

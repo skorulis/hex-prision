@@ -5,10 +5,13 @@
 //  Created by Alexander Skorulis on 28/11/2025.
 //
 
+import Knit
 import SwiftUI
 
 struct ContentView: View {
     @State private var scrollOffset: CGPoint = .zero
+    
+    @State var viewModel: ContentViewModel
     
     var body: some View {
         VStack(spacing: 0) {
@@ -35,5 +38,6 @@ struct ContentView: View {
 }
 
 #Preview {
-    ContentView()
+    let assembler = HexPrisonAssembly.testing()
+    ContentView(viewModel: assembler.resolver.contentViewModel())
 }

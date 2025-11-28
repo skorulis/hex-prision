@@ -5,6 +5,9 @@ import SwiftUI
 
 struct Hexagon {
     
+    let type: HexagonType
+    let index: Index
+    
     struct Index: Hashable {
         let row: Int
         let column: Int
