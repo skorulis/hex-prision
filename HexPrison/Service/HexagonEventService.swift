@@ -10,6 +10,8 @@ final class HexagonEventService {
     
     let mapStore: MapStore
     
+    private var timer: Timer?
+    
     @Resolvable<BaseResolver>
     init(mapStore: MapStore) {
         self.mapStore = mapStore
@@ -22,10 +24,36 @@ final class HexagonEventService {
     func addEvent(index: Hexagon.Index, type: EventType, time: Date) {
         clearEvent(index: index)
         events.append(Event(index: index, time: time, type: type))
+        resetTimer()
     }
     
     func resetTimer() {
+        timer?.invalidate()
+        timer = nil
         
+        guard let nextEvent else {
+            return
+        }
+        
+        let interval = nextEvent.time.timeIntervalSinceNow
+        timer = .scheduledTimer(withTimeInterval: interval, repeats: false) { [weak self] _ in
+            self?.action(event: nextEvent)
+            self?.resetTimer()
+        }
+    }
+    
+    private func action(event: Event) {
+        clearEvent(index: event.index)
+        switch event.type {
+        case .lost:
+            mapStore.map.setLost(index: event.index)
+        }
+    }
+    
+    private var nextEvent: Event? {
+        let index = events.enumerated().min(by: { $0.element.time < $1.element.time })
+        guard let index else { return nil }
+        return events[index.offset]
     }
     
 }
