@@ -48,6 +48,9 @@ final class HexagonEventService {
         switch event.type {
         case .lost:
             mapStore.map.setLost(index: event.index)
+            addEvent(index: event.index, type: .recover, time: Date().addingTimeInterval(Constants.recoverTime))
+        case .recover:
+            mapStore.map.reset(index: event.index)
         }
     }
     
@@ -70,5 +73,8 @@ extension HexagonEventService {
     enum EventType {
         // Set the hexagon to lost
         case lost
+        
+        // The hexagon returns to the default state
+        case recover
     }
 }

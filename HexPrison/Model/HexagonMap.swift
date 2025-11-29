@@ -15,6 +15,10 @@ struct HexagonMap {
         statuses[index] = .init(flipped: true, lost: true)
     }
     
+    mutating func reset(index: Hexagon.Index) {
+        statuses.removeValue(forKey: index)
+    }
+    
     mutating func toggleFlipped(index: Hexagon.Index) {
         var status = statuses[index] ?? .normal
         status.flipped.toggle()
@@ -32,11 +36,19 @@ struct HexagonMap {
     }
     
     private func getType(index: Hexagon.Index) -> HexagonType {
-        let hashMod = abs(index.stableHashValue) % 100
-        if hashMod >= 99 {
+        let hashRand = RandomNumberGeneratorWithSeed(seed: index.stableHashValue).next()
+        let hashMod = hashRand % 100
+        if hashMod == 45 {
             return .permanent
+        } else if hashMod == 44 {
+            return .clue
         } else {
             return .basic
         }
     }
+}
+
+struct RandomNumberGeneratorWithSeed: RandomNumberGenerator {
+    init(seed: Int) { srand48(seed) }
+    func next() -> UInt64 { return UInt64(drand48() * Double(UInt64.max)) }
 }

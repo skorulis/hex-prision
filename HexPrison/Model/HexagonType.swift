@@ -11,6 +11,9 @@ enum HexagonType {
     // Permanent hexagon that stays flipped
     case permanent
     
+    // Provides a hint or some other information about the prison
+    case clue
+    
 }
 
 extension HexagonType {
@@ -20,6 +23,8 @@ extension HexagonType {
             return .gray
         case .permanent:
             return .cyan
+        case .clue:
+            return .red
         }
     }
 }

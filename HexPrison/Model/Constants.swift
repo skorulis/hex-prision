@@ -6,4 +6,6 @@ enum Constants {
     static let scrollAreaSize: CGFloat = 1_000_000_000
     
     static let baseOffset = scrollAreaSize / 2
+    
+    static let recoverTime: TimeInterval = 10
 }

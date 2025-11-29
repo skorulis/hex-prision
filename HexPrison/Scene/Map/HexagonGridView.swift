@@ -46,9 +46,6 @@ struct HexagonGridView: View {
     
     // Calculate which hexagons are visible in the viewport
     private func calculateVisibleRange(viewportSize: CGSize) -> Hexagon.VisibleRange {
-        let horizontalSpacing = Hexagon.width + Hexagon.spacing
-        let verticalSpacing = Hexagon.radius * 1.5 + Hexagon.spacing
-        
         // Convert viewport bounds to world coordinates
         let worldFrame = CGRect(
             origin: .init(x: offset.x, y: offset.y),
@@ -59,10 +56,10 @@ struct HexagonGridView: View {
         
         // Find the hexagon indices that cover this world coordinate range
         
-        let startColumn = pixelToColumn(x: worldFrame.minX, horizontalSpacing: horizontalSpacing)
-        let startRow = pixelToRow(y: worldFrame.minY, verticalSpacing: verticalSpacing)
-        let endColumn = pixelToColumn(x: worldFrame.maxX, horizontalSpacing: horizontalSpacing) + 1
-        let endRow = pixelToRow(y: worldFrame.maxY, verticalSpacing: verticalSpacing) + 1
+        let startColumn = HexGridMath.pixelToColumn(x: worldFrame.minX)
+        let startRow = HexGridMath.pixelToRow(y: worldFrame.minY)
+        let endColumn = HexGridMath.pixelToColumn(x: worldFrame.maxX) + 1
+        let endRow = HexGridMath.pixelToRow(y: worldFrame.maxY) + 1
         
         // Ensure ranges are valid (start <= end)
         let clampedStartColumn = min(startColumn, endColumn)
@@ -74,20 +71,6 @@ struct HexagonGridView: View {
             rows: clampedStartRow..<clampedEndRow,
             columns: clampedStartColumn..<clampedEndColumn
         )
-    }
-    
-    // Convert pixel X position (in world coordinates) to hexagon column index
-    private func pixelToColumn(x: CGFloat, horizontalSpacing: CGFloat) -> Int {
-        // Account for the initial grid offset
-        let adjustedX = x - (Hexagon.width / 2 + Hexagon.spacing / 2)
-        return Int(floor(adjustedX / horizontalSpacing))
-    }
-    
-    // Convert pixel Y position (in world coordinates) to hexagon row index
-    private func pixelToRow(y: CGFloat, verticalSpacing: CGFloat) -> Int {
-        // Account for the initial grid offset
-        let adjustedY = y - (Hexagon.radius + Hexagon.spacing / 2)
-        return Int(floor(adjustedY / verticalSpacing))
     }
     
     // Calculate position for a hexagon at given row and column, accounting for offset
