@@ -105,10 +105,9 @@ struct ScrollViewWrapperConfig {
     let initialOffset: CGPoint
     
     static var `default`: Self {
-        let edgeSize: CGFloat = 1_000_000_000
         return .init(
-            contentSize: .init(width: edgeSize, height: edgeSize),
-            initialOffset: .init(x: edgeSize / 2, y: edgeSize / 2),
+            contentSize: .init(width: Constants.scrollAreaSize, height: Constants.scrollAreaSize),
+            initialOffset: .init(x: Constants.baseOffset, y: Constants.baseOffset),
         )
     }
 }

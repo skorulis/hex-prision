@@ -33,8 +33,8 @@ extension HexagonMapViewModel {
     
     func toggle(index: Hexagon.Index) {
         mapStore.map.toggleFlipped(index: index)
-        let flipped = mapStore.map.get(index: index).status.flipped
-        if flipped {
+        let hex = mapStore.map.get(index: index)
+        if hex.status.flipped && hex.type != .permanent {
             hexagonEventService.addEvent(
                 index: index,
                 type: .lost,

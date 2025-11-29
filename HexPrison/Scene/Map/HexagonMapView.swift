@@ -26,7 +26,10 @@ extension HexagonMapView: View {
     private var realContent: some View {
         HexagonGridView(
             map: viewModel.map,
-            offset: .init(x: viewPort.offset.x, y: viewPort.offset.y)
+            offset: .init(
+                x: viewPort.offset.x - Constants.baseOffset,
+                y: viewPort.offset.y - Constants.baseOffset
+            )
         ) { index in
             viewModel.toggle(index: index)
             print("Tapped hexagon at row: \(index.row), column: \(index.column)")

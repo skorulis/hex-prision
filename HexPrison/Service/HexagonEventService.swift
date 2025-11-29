@@ -19,6 +19,7 @@ final class HexagonEventService {
     
     func clearEvent(index: Hexagon.Index) {
         events = events.filter { $0.index != index }
+        resetTimer()
     }
     
     func addEvent(index: Hexagon.Index, type: EventType, time: Date) {
