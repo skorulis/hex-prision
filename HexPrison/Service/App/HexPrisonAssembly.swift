@@ -11,8 +11,15 @@ final class HexPrisonAssembly: AutoInitModuleAssembly {
     init() {}
     
     @MainActor func assemble(container: Container<TargetResolver>) {
+        registerServices(container: container)
         registerStores(container: container)
         registerViewModels(container: container)
+    }
+    
+    @MainActor
+    private func registerServices(container: Container<TargetResolver>) {
+        container.register(HexagonEventService.self) { HexagonEventService.make(resolver: $0) }
+            .inObjectScope(.container)
     }
     
     @MainActor

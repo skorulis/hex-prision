@@ -1,8 +1,9 @@
 //Created by Alexander Skorulis on 28/11/2025.
 
+import Combine
 import Foundation
 
-final class MapStore {
+final class MapStore: ObservableObject {
     
-    var map = HexagonMap()
+    @Published var map = HexagonMap()
 }
