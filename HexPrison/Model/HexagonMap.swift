@@ -13,7 +13,7 @@ struct HexagonMap {
     
     mutating func toggleFlipped(index: Hexagon.Index) {
         var status = statuses[index] ?? .normal
-        status.lost.toggle()
+        status.flipped.toggle()
         statuses[index] = status
     }
     

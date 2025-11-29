@@ -10,16 +10,14 @@ struct HexagonButton: View {
     let action: (Hexagon.Index) -> Void
     
     var body: some View {
-        if hexagon.status.lost {
-            EmptyView()
-        } else {
-            Button(action: onPress) {
-                content
-            }
-            .buttonStyle(PlainButtonStyle())
-            .scaleEffect(1 - dimming * 0.4)
-            .brightness(-dimming * 0.9)
+        Button(action: onPress) {
+            content
         }
+        .buttonStyle(PlainButtonStyle())
+        .scaleEffect( (1 - dimming * 0.4) * (hexagon.status.lost ? 0.3 : 1) )
+        .brightness(-dimming * 0.9)
+        .opacity(hexagon.status.lost ? 0 : 1)
+        .animation(.easeOut(duration: 0.6), value: hexagon.status.lost)
     }
     
     private var content: some View {
