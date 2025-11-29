@@ -5,33 +5,34 @@ import Foundation
 /// Container for the entire game map
 struct HexagonMap {
     
-    private var flippedHexagons: [Hexagon.Index: Bool] = [:]
+    private var statuses: [Hexagon.Index: Hexagon.Status] = [:]
     
     mutating func set(flipped: Bool, index: Hexagon.Index) {
-        flippedHexagons[index] = flipped
+        statuses[index] = flipped ? .flipped : .normal
     }
     
     mutating func toggleFlipped(index: Hexagon.Index) {
-        var flipped = flippedHexagons[index] ?? false
-        flipped.toggle()
-        flippedHexagons[index] = flipped
+        var status = statuses[index] ?? .normal
+        status.lost.toggle()
+        statuses[index] = status
     }
     
     func get(index: Hexagon.Index) -> Hexagon {
-        let flipped = flippedHexagons[index] ?? false
+        let status = statuses[index] ?? .normal
+        let type = getType(index: index)
+        return .init(
+            type: type,
+            index: index,
+            status: status,
+        )
+    }
+    
+    private func getType(index: Hexagon.Index) -> HexagonType {
         let hashMod = abs(index.stableHashValue) % 100
         if hashMod >= 99 {
-            return .init(
-                type: .permanent,
-                index: index,
-                flipped: flipped,
-            )
+            return .permanent
+        } else {
+            return .basic
         }
-        
-        return .init(
-            type: .basic,
-            index: index,
-            flipped: flipped,
-        )
     }
 }

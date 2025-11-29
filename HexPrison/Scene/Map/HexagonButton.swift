@@ -10,12 +10,16 @@ struct HexagonButton: View {
     let action: (Hexagon.Index) -> Void
     
     var body: some View {
-        Button(action: onPress) {
-            content
+        if hexagon.status.lost {
+            EmptyView()
+        } else {
+            Button(action: onPress) {
+                content
+            }
+            .buttonStyle(PlainButtonStyle())
+            .scaleEffect(1 - dimming * 0.4)
+            .brightness(-dimming * 0.9)
         }
-        .buttonStyle(PlainButtonStyle())
-        .scaleEffect(1 - dimming * 0.4)
-        .brightness(-dimming * 0.9)
     }
     
     private var content: some View {
@@ -23,21 +27,33 @@ struct HexagonButton: View {
             // Front side
             HexagonShape(radius: Hexagon.radius)
                 .fill(hexagon.type.color)
-                .opacity(hexagon.flipped ? 0 : 1)
+                .brightness(-0.1)
+                .opacity(hexagon.status.flipped ? 0 : 1)
             
-            // Back side (flipped) - rotated 180 degrees on Y axis
-            HexagonShape(radius: Hexagon.radius)
-                .fill(hexagon.type.color.opacity(0.5))
-                .scaleEffect(x: -1, y: 1) // Mirror horizontally for back side
-                .opacity(hexagon.flipped ? 1 : 0)
+            back
         }
         .frame(width: Hexagon.radius * 2, height: Hexagon.radius * 2)
         .rotation3DEffect(
-            .degrees(hexagon.flipped ? 180 : 0),
+            .degrees(hexagon.status.flipped ? 180 : 0),
             axis: (x: 0, y: 1, z: 0),
             perspective: 0.5
         )
-        .animation(.spring(response: 0.6, dampingFraction: 0.7), value: hexagon.flipped)
+        .animation(.spring(response: 0.6, dampingFraction: 0.7), value: hexagon.status.flipped)
+    }
+    
+    private var back: some View {
+        ZStack(alignment: .center) {
+            // Back side (flipped) - rotated 180 degrees on Y axis
+            HexagonShape(radius: Hexagon.radius)
+                .fill(hexagon.type.color)
+            
+            Image(systemName: "circle.fill")
+                .resizable()
+                .frame(width: 24, height: 24)
+                .foregroundStyle(Color.white)
+        }
+        .scaleEffect(x: -1, y: 1) // Mirror horizontally for back side
+        .opacity(hexagon.status.flipped ? 1 : 0)
     }
     
     private func onPress() {

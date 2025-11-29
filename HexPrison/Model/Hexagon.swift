@@ -7,7 +7,7 @@ struct Hexagon {
     
     let type: HexagonType
     let index: Index
-    let flipped: Bool
+    let status: Status
     
     // Radius of each hexagon (center to vertex)
     static let radius: CGFloat = 30
@@ -19,6 +19,15 @@ struct Hexagon {
 }
 
 extension Hexagon {
+    
+    struct Status {
+        var flipped: Bool
+        var lost: Bool
+        
+        static var normal: Self { .init(flipped: false, lost: false) }
+        static var flipped: Self { .init(flipped: true, lost: false) }
+    }
+    
     struct Index: Hashable, Identifiable {
         let row: Int
         let column: Int
