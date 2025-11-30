@@ -44,9 +44,9 @@ struct HexagonMap {
     private func getType(index: Hexagon.Index) -> HexagonType {
         let hashRand = RandomNumberGeneratorWithSeed(seed: index.stableHashValue).next()
         let hashMod = hashRand % 100
-        if hashMod == 45 {
+        if hashMod == 44 {
             return .permanent
-        } else if hashMod == 44 {
+        } else if hashMod == 43 {
             return .clue
         } else {
             return .basic

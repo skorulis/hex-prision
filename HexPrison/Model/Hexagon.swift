@@ -18,6 +18,8 @@ nonisolated struct Hexagon {
     static let spacing: CGFloat = 6
 }
 
+// MARK: - Inner Types
+
 extension Hexagon {
     
     struct Status {
@@ -51,11 +53,22 @@ extension Hexagon {
         var id: String {
             "\(row)-\(column)"
         }
+        
+        func move(direction: Direction, amount: Int) -> Self {
+            HexGridMath.move(index: self, direction: direction, amount: amount)
+        }
     }
     
-    // Visible range of hexagons
+    /// Visible range of hexagons
     struct VisibleRange {
         let rows: Range<Int>
         let columns: Range<Int>
+    }
+    
+    /// Direction from this hexagon
+    enum Direction {
+        case left, right
+        case leftTop, rightTop
+        case leftBottom, rightBottom
     }
 }

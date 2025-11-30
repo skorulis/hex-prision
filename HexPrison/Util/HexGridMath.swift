@@ -51,4 +51,93 @@ nonisolated enum HexGridMath {
             .init(row: row + 1, column: col + 1 - offset),
         ]
     }
+    
+    /// Returns an array of all hexagon indices in a ring around a central point
+    /// - Parameters:
+    ///   - center: The central hexagon index
+    ///   - radius: The radius of the ring (distance from center). For radius 1, this returns the same as adjacentIndices
+    /// - Returns: Array of Hexagon.Index values representing all hexagons in the ring
+    static func ringIndices(center: Hexagon.Index, radius: Int) -> [Hexagon.Index] {
+        guard radius > 0 else {
+            return [center]
+        }
+        
+        var indices: [Hexagon.Index] = []
+        let directions: [Hexagon.Direction] = [.rightTop, .right, .rightBottom, .leftBottom, .left, .leftTop]
+        
+        var currentIndex = center.move(direction: .left, amount: radius)
+        for direction in directions {
+            for _ in 1...radius {
+                currentIndex = currentIndex.move(direction: direction, amount: 1)
+                indices.append(currentIndex)
+            }
+        }
+        
+        return indices
+    }
+    
+    /// Calculate the sum of offsets for a range of consecutive rows (closed-form formula)
+    /// Offset formula: offset = (row + 1) % 2 + (row < 0 ? 2 : 0)
+    /// Even rows contribute 1, odd rows contribute 0 (for non-negative)
+    /// Negative rows add 2 to their base offset
+    private static func sumOffsets(startRow: Int, count: Int, direction: Int) -> Int {
+        guard count > 0 else { return 0 }
+        
+        let step = direction < 0 ? -1 : 1
+        let endRow = startRow + (count - 1) * step
+        
+        // Count even rows: ceil(count/2) if start is even, floor(count/2) if start is odd
+        let evenCount = (count + (startRow % 2 == 0 ? 1 : 0)) / 2
+        
+        // Calculate negative row adjustment: +2 for each negative row in the range
+        var sum = evenCount
+        if endRow < 0 {
+            let negativeEnd = min(endRow, -1)
+            let negativeCount = negativeEnd - endRow + 1
+            sum += negativeCount * 2
+        }
+        
+        return sum - (startRow < 0 ? 2 : 0)
+    }
+    
+    /// Move from the start index in a straight line along a given direction
+    static func move(index: Hexagon.Index, direction: Hexagon.Direction, amount: Int) -> Hexagon.Index {
+        
+        let row: Int
+        switch direction {
+        case .left, .right:
+            row = index.row
+        case .leftTop, .rightTop:
+            row = index.row - amount
+        case .leftBottom, .rightBottom:
+            row = index.row + amount
+            
+        }
+        
+        var column: Int
+        switch direction {
+        case .left:
+            column = index.column - amount
+        case .right:
+            column = index.column + amount
+        case .leftTop:
+            // Column decreases by sum of offsets from rows we step through (moving up)
+            let offsetSum = sumOffsets(startRow: index.row, count: amount, direction: -1)
+            column = index.column - offsetSum
+        case .rightTop:
+            // Column increases by (amount - sum of offsets) from rows we step through
+            let offsetSum = sumOffsets(startRow: index.row, count: amount, direction: -1)
+            column = index.column + amount - offsetSum
+        case .leftBottom:
+            // Column decreases by sum of offsets from rows we step through (moving down)
+            let offsetSum = sumOffsets(startRow: index.row, count: amount, direction: 1)
+            column = index.column - offsetSum
+        case .rightBottom:
+            // Column increases by (amount - sum of offsets) from rows we step through
+            let offsetSum = sumOffsets(startRow: index.row, count: amount, direction: 1)
+            column = index.column + amount - offsetSum
+        }
+        
+        return .init(row: row, column: column)
+    }
 }
