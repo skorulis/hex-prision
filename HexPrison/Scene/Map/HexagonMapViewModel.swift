@@ -33,12 +33,18 @@ extension HexagonMapViewModel {
     
     func toggle(index: Hexagon.Index) {
         mapStore.map.toggleFlipped(index: index)
+        
+        for adj in HexGridMath.adjacentIndices(index: index) {
+            mapStore.map.set(pulse: true, index: adj)
+            hexagonEventService.addEvent(index: adj, type: .unpulse, time: Constants.pulseDuration)
+        }
+        
         let hex = mapStore.map.get(index: index)
         if hex.status.flipped && hex.type != .permanent {
             hexagonEventService.addEvent(
                 index: index,
                 type: .lost,
-                time: Date().addingTimeInterval(5)
+                time: 5,
             )
         } else {
             hexagonEventService.clearEvent(index: index)

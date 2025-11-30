@@ -3,7 +3,7 @@
 import Foundation
 import SwiftUI
 
-struct Hexagon {
+nonisolated struct Hexagon {
     
     let type: HexagonType
     let index: Index
@@ -23,12 +23,19 @@ extension Hexagon {
     struct Status {
         var flipped: Bool
         var lost: Bool
+        var pulse: Bool
+        
+        init(flipped: Bool = false, lost: Bool = false, pulse: Bool = false) {
+            self.flipped = flipped
+            self.lost = lost
+            self.pulse = pulse
+        }
         
         static var normal: Self { .init(flipped: false, lost: false) }
         static var flipped: Self { .init(flipped: true, lost: false) }
     }
     
-    struct Index: Hashable, Identifiable {
+    nonisolated struct Index: nonisolated Hashable, Identifiable {
         let row: Int
         let column: Int
         

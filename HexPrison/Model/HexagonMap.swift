@@ -7,6 +7,12 @@ struct HexagonMap {
     
     private var statuses: [Hexagon.Index: Hexagon.Status] = [:]
     
+    mutating func set(pulse: Bool, index: Hexagon.Index) {
+        var status = statuses[index] ?? .normal
+        status.pulse = pulse
+        statuses[index] = status
+    }
+    
     mutating func set(flipped: Bool, index: Hexagon.Index) {
         statuses[index] = flipped ? .flipped : .normal
     }

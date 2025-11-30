@@ -15,9 +15,11 @@ struct HexagonButton: View {
         }
         .buttonStyle(PlainButtonStyle())
         .scaleEffect( (1 - dimming * 0.4) * (hexagon.status.lost ? 0.3 : 1) )
+        .scaleEffect(hexagon.status.pulse ? 0.9 : 1)
         .brightness(-dimming * 0.9)
         .opacity(hexagon.status.lost ? 0 : 1)
         .animation(.easeOut(duration: 0.6), value: hexagon.status.lost)
+        .animation(.easeInOut(duration: Constants.pulseDuration), value: hexagon.status.pulse)
     }
     
     private var content: some View {
