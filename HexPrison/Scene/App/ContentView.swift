@@ -14,16 +14,7 @@ struct ContentView: View {
     @State var viewModel: ContentViewModel
     
     var body: some View {
-        VStack(spacing: 0) {
-            // Label showing current scroll offset
-            VStack(alignment: .leading, spacing: 8) {
-                Text("Scroll Position\nX: \(Int(scrollOffset.x)), Y: \(Int(scrollOffset.y))")
-                    .font(.headline)
-            }
-            .padding()
-            .frame(maxWidth: .infinity, alignment: .leading)
-            .background(Color(.systemGray5))
-            
+        ZStack(alignment: .bottom) {
             // ScrollView wrapper with SwiftUI content
             ScrollViewWrapper(
                 config: .default,
@@ -32,8 +23,28 @@ struct ContentView: View {
                 HexagonMapView(viewModel: viewModel.mapViewModel, viewPort: offset)
             }
             .ignoresSafeArea()
+            
+            bottomButtons
         }
         .background(Color.black)
+    }
+    
+    private var bottomButtons: some View {
+        HStack {
+            Spacer()
+            upgradeButton
+        }
+        .padding(.horizontal, 24)
+    }
+    
+    private var upgradeButton: some View {
+        Button(action: {}) {
+            Image(systemName: "arrow.up.circle.fill")
+                .resizable()
+                .aspectRatio(contentMode: .fit)
+                .frame(width: 32, height: 32)
+                .foregroundStyle(Color.white)
+        }
     }
 }
 

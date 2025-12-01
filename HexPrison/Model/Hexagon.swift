@@ -41,6 +41,8 @@ extension Hexagon {
         let row: Int
         let column: Int
         
+        static var origin: Self { .init(row: 0, column: 0) }
+        
         /// Stable, deterministic hash independent of Swift's randomised hasher.
         /// Use this whenever the hash must be the same between application runs.
         var stableHashValue: Int {

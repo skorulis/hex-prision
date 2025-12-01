@@ -7,12 +7,23 @@ import SwiftUI
 
 @Observable final class UpgradeGridViewModel {
     
-    @Resolvable<Resolver>
-    init() {
-        
+    private let upgradeStore: UpgradeStore
+    
+    @Resolvable<BaseResolver>
+    init(upgradeStore: UpgradeStore) {
+        self.upgradeStore = upgradeStore
     }
 }
 
 // MARK: - Logic
 
-extension UpgradeGridViewModel {}
+extension UpgradeGridViewModel {
+    
+    func canPurcahse(upgrade: Upgrade) -> Bool {
+        if upgrade.index == .origin {
+            return true
+        }
+        return false
+    }
+    
+}

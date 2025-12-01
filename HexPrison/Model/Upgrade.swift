@@ -23,11 +23,22 @@ enum Upgrade: CaseIterable, Identifiable {
     var color: Color {
         switch self {
         case .memory:
-            return .blue
+            return .yellow
         case .knowledge:
             return .red
         case .notes:
-            return .green
+            return .red
+        }
+    }
+    
+    var icon: Image {
+        switch self {
+        case .memory:
+            return Image(systemName: "memorychip.fill")
+        case .knowledge:
+            return Image(systemName: "brain.fill")
+        case .notes:
+            return Image(systemName: "list.clipboard.fill")
         }
     }
     

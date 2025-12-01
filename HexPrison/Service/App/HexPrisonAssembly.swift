@@ -28,6 +28,11 @@ final class HexPrisonAssembly: AutoInitModuleAssembly {
             MapStore()
         }
         .inObjectScope(.container)
+        
+        container.register(UpgradeStore.self) { _ in
+            UpgradeStore()
+        }
+        .inObjectScope(.container)
     }
     
     @MainActor

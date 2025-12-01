@@ -15,6 +15,10 @@ import SwiftUI
 extension UpgradeGridView: View {
     
     var body: some View {
+        TitleBar(
+            title: "Upgrades",
+            backAction: {}
+        )
         ScrollView([.horizontal, .vertical]) {
             grid
         }
@@ -32,6 +36,7 @@ extension UpgradeGridView: View {
                             offset: .zero
                         )
                     )
+                    .disabled(!viewModel.canPurcahse(upgrade: upgrade))
             }
         }
         //.offset(x: 100, y: 100)
