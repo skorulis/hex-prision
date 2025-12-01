@@ -34,7 +34,7 @@ extension HexagonMapViewModel {
     func toggle(index: Hexagon.Index) {
         mapStore.map.toggleFlipped(index: index)
         
-        for adj in HexGridMath.ringIndices(center: index, radius: 2) {
+        for adj in HexGridMath.ringIndices(center: index, radius: 3) {
             mapStore.map.set(pulse: true, index: adj)
             hexagonEventService.addEvent(index: adj, type: .unpulse, time: Constants.pulseDuration)
         }

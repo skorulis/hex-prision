@@ -25,7 +25,11 @@ struct HexagonGridView: View {
             ZStack {
                 ForEach(visibleRange.rows, id: \.self) { row in
                     ForEach(visibleRange.columns, id: \.self) { column in
-                        let position = hexPosition(row: row, column: column, in: geometry.size)
+                        let position = HexGridMath.position(
+                            row: row,
+                            column: column,
+                            offset: offset
+                        )
                         let dimming = calculateDimming(
                             position: position,
                             viewportCenter: viewportCenter,
@@ -71,28 +75,6 @@ struct HexagonGridView: View {
             rows: clampedStartRow..<clampedEndRow,
             columns: clampedStartColumn..<clampedEndColumn
         )
-    }
-    
-    // Calculate position for a hexagon at given row and column, accounting for offset
-    private func hexPosition(row: Int, column: Int, in size: CGSize) -> CGPoint {
-        // Center-to-center horizontal spacing
-        let horizontalSpacing = Hexagon.width + Hexagon.spacing
-        // Center-to-center vertical spacing
-        let verticalSpacing = Hexagon.radius * 1.5 + Hexagon.spacing
-        
-        // Start position: account for hexagon radius so first hex doesn't get clipped
-        let startX = Hexagon.width / 2 + Hexagon.spacing / 2
-        let startY = Hexagon.radius + Hexagon.spacing / 2
-        
-        // Offset every other row by half the horizontal spacing for proper hex grid
-        let xOffset: CGFloat = row % 2 == 0 ? 0 : horizontalSpacing / 2
-        
-        // Calculate base position
-        let baseX = startX + CGFloat(column) * horizontalSpacing + xOffset
-        let baseY = startY + CGFloat(row) * verticalSpacing
-        
-        // Apply the offset to move the grid
-        return CGPoint(x: baseX - offset.x, y: baseY - offset.y)
     }
     
     private func calculateDimming(

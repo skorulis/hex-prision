@@ -27,6 +27,28 @@ nonisolated enum HexGridMath {
         return .init(row: row, column: column)
     }
     
+    // Calculate position for a hexagon at given row and column, accounting for offset
+    static func position(row: Int, column: Int, offset: CGPoint) -> CGPoint {
+        // Center-to-center horizontal spacing
+        let horizontalSpacing = Hexagon.width + Hexagon.spacing
+        // Center-to-center vertical spacing
+        let verticalSpacing = Hexagon.radius * 1.5 + Hexagon.spacing
+        
+        // Start position: account for hexagon radius so first hex doesn't get clipped
+        let startX = Hexagon.width / 2 + Hexagon.spacing / 2
+        let startY = Hexagon.radius + Hexagon.spacing / 2
+        
+        // Offset every other row by half the horizontal spacing for proper hex grid
+        let xOffset: CGFloat = row % 2 == 0 ? 0 : horizontalSpacing / 2
+        
+        // Calculate base position
+        let baseX = startX + CGFloat(column) * horizontalSpacing + xOffset
+        let baseY = startY + CGFloat(row) * verticalSpacing
+        
+        // Apply the offset to move the grid
+        return CGPoint(x: baseX - offset.x, y: baseY - offset.y)
+    }
+    
     /// Returns an array of all adjacent hexagon indices (6 neighbors)
     /// - Parameter index: The hexagon index to find neighbors for
     /// - Returns: Array of Hexagon.Index values representing all 6 adjacent hexagons
