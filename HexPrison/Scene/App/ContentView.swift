@@ -5,50 +5,23 @@
 //  Created by Alexander Skorulis on 28/11/2025.
 //
 
+import ASKCoordinator
 import Knit
 import SwiftUI
 
 struct ContentView: View {
-    @State private var scrollOffset: CGPoint = .zero
-    
+    @Environment(\.resolver) private var resolver
+    @State var coordinator = Coordinator(root: MainPath.game)
     @State var viewModel: ContentViewModel
     
     var body: some View {
-        ZStack(alignment: .bottom) {
-            // ScrollView wrapper with SwiftUI content
-            ScrollViewWrapper(
-                config: .default,
-                scrollOffset: $scrollOffset
-            ) { offset in
-                HexagonMapView(viewModel: viewModel.mapViewModel, viewPort: offset)
-            }
-            .ignoresSafeArea()
-            
-            bottomButtons
-        }
-        .background(Color.black)
-    }
-    
-    private var bottomButtons: some View {
-        HStack {
-            Spacer()
-            upgradeButton
-        }
-        .padding(.horizontal, 24)
-    }
-    
-    private var upgradeButton: some View {
-        Button(action: {}) {
-            Image(systemName: "arrow.up.circle.fill")
-                .resizable()
-                .aspectRatio(contentMode: .fit)
-                .frame(width: 32, height: 32)
-                .foregroundStyle(Color.white)
-        }
+        CoordinatorView(coordinator: coordinator)
+            .with(renderer: resolver!.mainPathRenderer())
     }
 }
 
 #Preview {
     let assembler = HexPrisonAssembly.testing()
     ContentView(viewModel: assembler.resolver.contentViewModel())
+        .environment(\.resolver, assembler.resolver)
 }

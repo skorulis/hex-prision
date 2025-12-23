@@ -1,5 +1,6 @@
 //Created by Alexander Skorulis on 1/12/2025.
 
+import ASKCoordinator
 import Foundation
 import Knit
 import SwiftUI
@@ -15,20 +16,28 @@ import SwiftUI
 extension UpgradeGridView: View {
     
     var body: some View {
-        TitleBar(
-            title: "Upgrades",
-            backAction: {}
-        )
-        ScrollView([.horizontal, .vertical]) {
-            grid
+        VStack(spacing: 0) {
+            TitleBar(
+                title: "Upgrades",
+                backAction: { viewModel.coordinator?.pop() }
+            )
+            ScrollView([.horizontal, .vertical]) {
+                grid
+            }
+            .background(Color.black)
+            maybeSelectionView
         }
-        .background(Color.black)
+        .navigationBarHidden(true)
     }
     
     private var grid: some View {
         ZStack {
             ForEach(Upgrade.allCases) { upgrade in
-                UpgradeButton(upgrade: upgrade)
+                UpgradeButton(
+                    upgrade: upgrade,
+                    isOwned: isPurchased(upgrade: upgrade),
+                    action: { viewModel.selection = upgrade}
+                )
                     .position(
                         HexGridMath.position(
                             row: upgrade.index.row,
@@ -42,11 +51,20 @@ extension UpgradeGridView: View {
         //.offset(x: 100, y: 100)
     }
     
-    private func button(upgrade: Upgrade) -> some View {
-        Button(action: {}) {
-            HexagonShape(radius: Hexagon.radius)
-                .fill(upgrade.color)
+    @ViewBuilder
+    private var maybeSelectionView: some View {
+        if let selection = viewModel.selection {
+            UpgradeDetailsPanel(
+                upgrade: selection,
+                money: 0,
+                isPurchased: isPurchased(upgrade: selection),
+                onBuy: { viewModel.purchase(upgrade: selection) }
+            )
         }
+    }
+    
+    func isPurchased(upgrade: Upgrade) -> Bool {
+        return viewModel.purchased.contains(upgrade)
     }
 }
 

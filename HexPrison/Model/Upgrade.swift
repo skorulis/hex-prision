@@ -9,6 +9,11 @@ enum Upgrade: CaseIterable, Identifiable {
     case knowledge
     case notes
     
+    static let byIndex: [Hexagon.Index: Upgrade] = {
+        return Dictionary(grouping: Upgrade.allCases) { $0.index }
+            .mapValues { $0[0] }
+    }()
+    
     var index: Hexagon.Index {
         switch self {
         case .memory:
@@ -17,6 +22,32 @@ enum Upgrade: CaseIterable, Identifiable {
             return .init(row: 1, column: -1)
         case .notes:
             return .init(row: 2, column: -1)
+        }
+    }
+    
+    var cost: Int {
+        switch self {
+        case .memory:
+            return 0
+        case .knowledge:
+            return 10
+        case .notes:
+            return 100
+        }
+    }
+    
+    var name: String {
+        String(describing: self).capitalized
+    }
+    
+    var longDescription: String {
+        switch self {
+        case .memory:
+            return "How did I get here"
+        case .knowledge:
+            return "Someone must know something"
+        case .notes:
+            return "Where have I been"
         }
     }
     

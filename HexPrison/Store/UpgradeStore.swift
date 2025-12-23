@@ -5,7 +5,7 @@ import Foundation
 
 final class UpgradeStore: ObservableObject {
     
-    var purchased: Set<Upgrade> = []
+    @Published var purchased: Set<Upgrade> = []
     
     init() {}
     

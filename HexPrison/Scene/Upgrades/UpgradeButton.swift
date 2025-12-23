@@ -7,6 +7,8 @@ import SwiftUI
 
 @MainActor struct UpgradeButton {
     let upgrade: Upgrade
+    let isOwned: Bool
+    let action: () -> Void
     
     @Environment(\.isEnabled) private var isEnabled
 }
@@ -16,7 +18,7 @@ import SwiftUI
 extension UpgradeButton: View {
     
     var body: some View {
-        Button(action: {}) {
+        Button(action: action) {
             if isEnabled {
                 content
             } else {
@@ -62,6 +64,7 @@ struct HexagonButtonStyle: ButtonStyle {
 // MARK: - Previews
 
 #Preview {
-    UpgradeButton(upgrade: .memory)
+    UpgradeButton(upgrade: .memory, isOwned: true, action: {})
+    UpgradeButton(upgrade: .memory, isOwned: false, action: {})
 }
 

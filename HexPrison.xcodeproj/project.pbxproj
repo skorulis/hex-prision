@@ -10,6 +10,7 @@
 		FA11367A2ED9880900111AF1 /* Knit in Frameworks */ = {isa = PBXBuildFile; productRef = FA1136792ED9880900111AF1 /* Knit */; };
 		FA11367C2ED9880900111AF1 /* KnitMacros in Frameworks */ = {isa = PBXBuildFile; productRef = FA11367B2ED9880900111AF1 /* KnitMacros */; };
 		FA11368C2ED98E7A00111AF1 /* knitconfig.json in Resources */ = {isa = PBXBuildFile; fileRef = FA11368B2ED98E7A00111AF1 /* knitconfig.json */; };
+		FA1138C82EDD4E8200111AF1 /* ASKCoordinator in Frameworks */ = {isa = PBXBuildFile; productRef = FA1138C72EDD4E8200111AF1 /* ASKCoordinator */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -46,6 +47,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				FA1138C82EDD4E8200111AF1 /* ASKCoordinator in Frameworks */,
 				FA11367A2ED9880900111AF1 /* Knit in Frameworks */,
 				FA11367C2ED9880900111AF1 /* KnitMacros in Frameworks */,
 			);
@@ -103,6 +105,7 @@
 			packageProductDependencies = (
 				FA1136792ED9880900111AF1 /* Knit */,
 				FA11367B2ED9880900111AF1 /* KnitMacros */,
+				FA1138C72EDD4E8200111AF1 /* ASKCoordinator */,
 			);
 			productName = HexPrison;
 			productReference = FA1135502ED8E25D00111AF1 /* HexPrison.app */;
@@ -161,6 +164,7 @@
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
 				FA1136782ED9880900111AF1 /* XCRemoteSwiftPackageReference "knit" */,
+				FA1138C62EDD4E8200111AF1 /* XCRemoteSwiftPackageReference "ASKCoordinator" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = FA1135512ED8E25D00111AF1 /* Products */;
@@ -493,6 +497,14 @@
 				kind = branch;
 			};
 		};
+		FA1138C62EDD4E8200111AF1 /* XCRemoteSwiftPackageReference "ASKCoordinator" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/skorulis/ASKCoordinator";
+			requirement = {
+				branch = main;
+				kind = branch;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -510,6 +522,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = FA1136782ED9880900111AF1 /* XCRemoteSwiftPackageReference "knit" */;
 			productName = "plugin:KnitBuildPlugin";
+		};
+		FA1138C72EDD4E8200111AF1 /* ASKCoordinator */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = FA1138C62EDD4E8200111AF1 /* XCRemoteSwiftPackageReference "ASKCoordinator" */;
+			productName = ASKCoordinator;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

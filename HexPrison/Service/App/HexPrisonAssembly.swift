@@ -20,6 +20,8 @@ final class HexPrisonAssembly: AutoInitModuleAssembly {
     private func registerServices(container: Container<TargetResolver>) {
         container.register(HexagonEventService.self) { HexagonEventService.make(resolver: $0) }
             .inObjectScope(.container)
+        
+        container.register(MainPathRenderer.self) { MainPathRenderer(resolver: $0) }
     }
     
     @MainActor
@@ -40,6 +42,7 @@ final class HexPrisonAssembly: AutoInitModuleAssembly {
         container.register(ContentViewModel.self) { ContentViewModel.make(resolver: $0) }
         container.register(HexagonMapViewModel.self) { HexagonMapViewModel.make(resolver: $0) }
         container.register(UpgradeGridViewModel.self) { UpgradeGridViewModel.make(resolver: $0) }
+        container.register(GameViewModel.self) { GameViewModel.make(resolver: $0) }
     }
 }
 
