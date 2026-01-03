@@ -35,6 +35,11 @@ final class HexPrisonAssembly: AutoInitModuleAssembly {
             UpgradeStore()
         }
         .inObjectScope(.container)
+        
+        container.register(PlayerStore.self) { _ in
+            PlayerStore()
+        }
+        .inObjectScope(.container)
     }
     
     @MainActor
