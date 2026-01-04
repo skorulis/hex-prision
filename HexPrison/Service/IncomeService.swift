@@ -34,8 +34,6 @@ extension IncomeService {
             gainWallet.add(currency: .dot, amount: 1)
         }
         
-        print("Calculating income: \(gainWallet.balance)")
-        
         playerStore.wallet.add(wallet: gainWallet)
     }
 }

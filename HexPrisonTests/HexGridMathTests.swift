@@ -132,4 +132,20 @@ import Testing
         #expect(rightBottom == Hexagon.Index(row: -11, column: -16))
     }
     
+    @Test func rows() {
+        let rows: [Int: [Hexagon.Index]] = HexGridMath.rows(indexes: [
+            Hexagon.Index(row: 7, column: 2),
+            Hexagon.Index(row: 6, column: 2),
+            Hexagon.Index(row: 7, column: 1),
+        ])
+        
+        let expected = [
+            6: [Hexagon.Index(row: 6, column: 2)],
+            7: [Hexagon.Index(row: 7, column: 1), Hexagon.Index(row: 7, column: 2),],
+        ]
+        
+        #expect(rows == expected)
+        
+    }
+    
 }

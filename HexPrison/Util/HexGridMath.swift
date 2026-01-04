@@ -162,4 +162,16 @@ nonisolated enum HexGridMath {
         
         return .init(row: row, column: column)
     }
+    
+    /// Convert a set of indexes into ordered rows
+    static func rows(indexes: [Hexagon.Index]) -> [Int: [Hexagon.Index]] {
+        var result = [Int: [Hexagon.Index]]()
+        for index in indexes {
+            var array = result[index.row] ?? []
+            array.append(index)
+            result[index.row] = array
+        }
+        
+        return result.mapValues { $0.sorted(by: { $0.column < $1.column })}
+    }
 }
