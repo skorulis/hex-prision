@@ -35,6 +35,8 @@ extension Hexagon {
         
         static var normal: Self { .init(flipped: false, lost: false) }
         static var flipped: Self { .init(flipped: true, lost: false) }
+        
+        var isActive: Bool { flipped && !lost }
     }
     
     nonisolated struct Index: nonisolated Hashable, Identifiable {

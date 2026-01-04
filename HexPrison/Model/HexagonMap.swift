@@ -52,6 +52,35 @@ struct HexagonMap {
             return .basic
         }
     }
+    
+    func getActive() -> [Hexagon.Index] {
+        statuses.filter { $0.value.isActive }.map(\.key)
+    }
+    
+    func isActive(index: Hexagon.Index) -> Bool {
+        statuses[index]?.isActive == true
+    }
+    
+    /// Return all connected hexagons for the conn
+    func getBlob(index: Hexagon.Index) -> Set<Hexagon.Index> {
+        guard isActive(index: index) else {
+            return []
+        }
+        var result = Set<Hexagon.Index>()
+        result.insert(index)
+        var toCheck = result
+        while let next = toCheck.popFirst() {
+            for adj in HexGridMath.adjacentIndices(index: next) {
+                if isActive(index: adj) && !result.contains(adj) {
+                    result.insert(adj)
+                    toCheck.insert(adj)
+                }
+            }
+            
+        }
+        
+        return result
+    }
 }
 
 struct RandomNumberGeneratorWithSeed: RandomNumberGenerator {

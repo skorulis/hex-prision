@@ -18,6 +18,9 @@ struct HexPrisonApp: App {
     var body: some Scene {
         WindowGroup {
             ContentView(viewModel: assembler.resolver.contentViewModel())
+                .task {
+                    assembler.resolver.incomeService().start()
+                }
         }
         .environment(\.resolver, assembler.resolver)
     }

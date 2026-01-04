@@ -16,4 +16,18 @@ struct Wallet: Codable {
     init(balance: [Currency: Double] = [:]) {
         self.balance = balance
     }
+    
+    mutating func add(currency: Currency, amount: Double) {
+        balance[currency] = self.amount(currency) + amount
+    }
+    
+    func amount(_ currency: Currency) -> Double {
+        balance[currency] ?? 0
+    }
+    
+    mutating func add(wallet: Wallet) {
+        for (key, value) in wallet.balance {
+            add(currency: key, amount: value)
+        }
+    }
 }
