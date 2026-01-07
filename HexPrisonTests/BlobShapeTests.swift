@@ -27,4 +27,20 @@ import Testing
         
         #expect(shape == .triangle)
     }
+    
+    @Test func hexagon() {
+        let shape = BlobShape.getShape(
+            blob: [
+                Hexagon.Index(row: 6, column: 2),
+                Hexagon.Index(row: 6, column: 3),
+                Hexagon.Index(row: 7, column: 1),
+                Hexagon.Index(row: 7, column: 2),
+                Hexagon.Index(row: 7, column: 3),
+                Hexagon.Index(row: 8, column: 2),
+                Hexagon.Index(row: 8, column: 3),
+            ]
+        )
+        
+        #expect(shape == .hexagon)
+    }
 }

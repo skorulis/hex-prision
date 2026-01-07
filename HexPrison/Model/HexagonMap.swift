@@ -13,22 +13,32 @@ struct HexagonMap {
         statuses[index] = status
     }
     
+    mutating func set(shape: BlobShape, index: Hexagon.Index) {
+        var status = statuses[index] ?? .normal
+        status.shape = shape
+        statuses[index] = status
+    }
+    
     mutating func set(flipped: Bool, index: Hexagon.Index) {
         statuses[index] = flipped ? .flipped : .normal
+        updateShapes(index: index)
     }
     
     mutating func setLost(index: Hexagon.Index) {
         statuses[index] = .init(flipped: true, lost: true)
+        updateShapes(index: index)
     }
     
     mutating func reset(index: Hexagon.Index) {
         statuses.removeValue(forKey: index)
+        updateShapes(index: index)
     }
     
     mutating func toggleFlipped(index: Hexagon.Index) {
         var status = statuses[index] ?? .normal
         status.flipped.toggle()
         statuses[index] = status
+        updateShapes(index: index)
     }
     
     func get(index: Hexagon.Index) -> Hexagon {
@@ -61,6 +71,22 @@ struct HexagonMap {
         statuses[index]?.isActive == true
     }
     
+    private mutating func updateShapes(index: Hexagon.Index) {
+        if isActive(index: index) {
+            let blob = getBlob(index: index)
+            let shape = BlobShape.getShape(blob: blob)
+            for idx in blob {
+                set(shape: shape, index: idx)
+            }
+        } else {
+            for idx in HexGridMath.adjacentIndices(index: index) {
+                if isActive(index: idx) {
+                    updateShapes(index: idx)
+                }
+            }
+        }
+    }
+    
     /// Return all connected hexagons for the conn
     func getBlob(index: Hexagon.Index) -> Set<Hexagon.Index> {
         guard isActive(index: index) else {
@@ -76,7 +102,6 @@ struct HexagonMap {
                     toCheck.insert(adj)
                 }
             }
-            
         }
         
         return result

@@ -15,19 +15,39 @@ enum BlobShape {
 
 extension BlobShape {
     
-    static func getShape(blob: Set<Hexagon.Index>) -> BlobShape {
+    static func getShape(blob: any Collection<Hexagon.Index>) -> BlobShape {
         if blob.count == 3 {
             if checkTriangle(blob: blob) {
                 return .triangle
+            }
+        } else if blob.count == 7 {
+            if checkHexagon(blob: blob) {
+                return .hexagon
             }
         }
         return .none
     }
     
-    private static func checkTriangle(blob: Set<Hexagon.Index>) -> Bool {
+    private static func checkHexagon(blob: any Collection<Hexagon.Index>) -> Bool {
         let rows = HexGridMath.rows(indexes: Array(blob))
         let keys = Array(rows.keys).sorted()
-        if keys.count != 2 {
+        guard keys.count == 3 else {
+            return false
+        }
+        let midRow = rows[keys[1]]!
+        guard midRow.count == 3 else {
+            return false
+        }
+        let adj = HexGridMath.adjacentIndices(index: midRow[1])
+        return adj.allSatisfy { index in
+            blob.contains(index)
+        }
+    }
+    
+    private static func checkTriangle(blob: any Collection<Hexagon.Index>) -> Bool {
+        let rows = HexGridMath.rows(indexes: Array(blob))
+        let keys = Array(rows.keys).sorted()
+        guard keys.count == 2 else {
             return false
         }
         guard keys[1] == keys[0] + 1 else {

@@ -26,11 +26,13 @@ extension Hexagon {
         var flipped: Bool
         var lost: Bool
         var pulse: Bool
+        var shape: BlobShape
         
-        init(flipped: Bool = false, lost: Bool = false, pulse: Bool = false) {
+        init(flipped: Bool = false, lost: Bool = false, pulse: Bool = false, shape: BlobShape = .none) {
             self.flipped = flipped
             self.lost = lost
             self.pulse = pulse
+            self.shape = shape
         }
         
         static var normal: Self { .init(flipped: false, lost: false) }

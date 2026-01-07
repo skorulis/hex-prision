@@ -47,17 +47,56 @@ struct HexagonButton: View {
             HexagonShape(radius: Hexagon.radius)
                 .fill(hexagon.type.color)
             
-            Image(systemName: "circle.fill")
+            flipShape(status: hexagon.status)
                 .resizable()
-                .frame(width: 24, height: 24)
+                .frame(width: 18, height: 18)
                 .foregroundStyle(Color.white)
+            
         }
         .scaleEffect(x: -1, y: 1) // Mirror horizontally for back side
         .opacity(hexagon.status.flipped ? 1 : 0)
+    }
+    
+    private func flipShape(status: Hexagon.Status) -> Image {
+        switch status.shape {
+        case .none:
+            return Image(systemName: "circle.fill")
+        case .triangle:
+            return Image(systemName: "triangle.fill")
+        case .hexagon:
+            return Image(systemName: "hexagon.fill")
+        }
     }
     
     private func onPress() {
         action(hexagon.index)
     }
     
+}
+
+#Preview {
+    HStack(spacing: 0) {
+        // Normal
+        HexagonButton(
+            hexagon: .init(
+                type: .basic,
+                index: .init(row: 0, column: 0),
+                status: .normal,
+            ),
+            dimming: 0,
+            action: { _ in }
+        )
+        
+        // Triangle
+        HexagonButton(
+            hexagon: .init(
+                type: .basic,
+                index: .init(row: 0, column: 0),
+                status: .init(flipped: true, shape: .triangle),
+            ),
+            dimming: 0,
+            action: { _ in }
+        )
+        
+    }
 }
