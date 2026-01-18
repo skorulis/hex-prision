@@ -28,11 +28,22 @@ struct GameView: View {
     }
     
     private var bottomButtons: some View {
-        HStack {
+        HStack(spacing: 8) {
             Spacer()
+            achievmentsButton
             upgradeButton
         }
         .padding(.horizontal, 24)
+    }
+    
+    private var achievmentsButton: some View {
+        Button(action: viewModel.showAchievements) {
+            Image(systemName: "star.circle.fill")
+                .resizable()
+                .aspectRatio(contentMode: .fit)
+                .frame(width: 32, height: 32)
+                .foregroundStyle(Color.white)
+        }
     }
     
     private var upgradeButton: some View {

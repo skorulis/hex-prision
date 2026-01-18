@@ -25,6 +25,9 @@ final class HexPrisonAssembly: AutoInitModuleAssembly {
         
         container.register(IncomeService.self) { IncomeService.make(resolver: $0) }
             .inObjectScope(.container)
+        
+        container.register(AchievementService.self) { AchievementService.make(resolver: $0) }
+            .inObjectScope(.container)
     }
     
     @MainActor

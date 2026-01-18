@@ -1,5 +1,6 @@
 //Created by Alexander Skorulis on 18/1/2026.
 
+import ASKCoordinator
 import Knit
 import Foundation
 import SwiftUI
@@ -17,7 +18,12 @@ extension AchievementListView: View {
     
     var body: some View {
         PageLayout(
-            titleBar: { TitleBar(title: "Achievements") },
+            titleBar: {
+                TitleBar(
+                    title: "Achievements",
+                    backAction: { viewModel.coordinator?.pop() }
+                )
+            },
             content: { content }
         )
     }
@@ -32,16 +38,26 @@ extension AchievementListView: View {
     
     private func button(for achievement: Achievement) -> some View {
         Button(action: {}) {
-            ZStack {
+            ZStack(alignment: .center) {
+                Color.black
+                
                 achievement.icon
                     .resizable()
                     .aspectRatio(contentMode: .fit)
                     .frame(width: 24, height: 24)
                     .foregroundStyle(achievement.color)
+                    .brightness(hasReached(achievement: achievement) ? 0 : -0.5)
+                
+                VStack {
+                    Spacer()
+                    Text(achievement.text)
+                        .foregroundStyle(Color.white)
+                }
+                
             }
             .frame(width: 72, height: 72)
             .border(Color.white, width: 2)
-            .brightness(hasReached(achievement: achievement) ? 0 : -0.5)
+            
         }
     }
     

@@ -25,4 +25,8 @@ extension GameViewModel {
         coordinator?.push(MainPath.upgrades)
     }
     
+    func showAchievements() {
+        coordinator?.push(MainPath.achievements)
+    }
+    
 }

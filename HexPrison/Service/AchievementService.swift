@@ -16,7 +16,9 @@ final class AchievementService {
     @Resolvable<BaseResolver>
     init(statStore: StatStore) {
         self.stateStore = statStore
-        
+    }
+    
+    func start() {
         stateStore.$totalEarnings.sink { [unowned self] in
             self.currentEarnings = $0
             self.checkAchievements()

@@ -20,6 +20,7 @@ struct HexPrisonApp: App {
             ContentView(viewModel: assembler.resolver.contentViewModel())
                 .task {
                     assembler.resolver.incomeService().start()
+                    assembler.resolver.achievementService().start()
                 }
         }
         .environment(\.resolver, assembler.resolver)

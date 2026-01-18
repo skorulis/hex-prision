@@ -50,6 +50,30 @@ extension Achievement {
 
 extension Achievement: Identifiable {
     
+    var id: String {
+        switch self {
+        case let .earnDots(double):
+            return "dots-\(double)"
+        case let .earnTriangles(double):
+            return "triangles-\(double)"
+        case let .earnHexagons(double):
+            return "hexagons-\(double)"
+        }
+    }
+    
+}
+
+// MARK: - UI
+
+extension Achievement {
+    
+    var text: String {
+        switch self {
+        case .earnDots(let double), .earnTriangles(let double), .earnHexagons(let double):
+            CompactNumberFormatter.string(double)
+        }
+    }
+    
     var icon: Image {
         switch self {
         case .earnDots:
@@ -71,16 +95,4 @@ extension Achievement: Identifiable {
             }
         }
     }
-    
-    var id: String {
-        switch self {
-        case let .earnDots(double):
-            return "dots-\(double)"
-        case let .earnTriangles(double):
-            return "triangles-\(double)"
-        case let .earnHexagons(double):
-            return "hexagons-\(double)"
-        }
-    }
-    
 }
