@@ -1,6 +1,7 @@
 //Created by Alexander Skorulis on 16/1/2026.
 
 import Foundation
+import SwiftUI
 
 enum Achievement: Equatable, Hashable {
     case earnDots(Double)
@@ -43,4 +44,43 @@ extension Achievement {
             .earnHexagons(1000000),
         ]
     }
+}
+
+// MARK: - Identifiable
+
+extension Achievement: Identifiable {
+    
+    var icon: Image {
+        switch self {
+        case .earnDots:
+            return Image(systemName: "circle.fill")
+        case .earnTriangles:
+            return Image(systemName: "triangle.fill")
+        case .earnHexagons:
+            return Image(systemName: "hexagon.fill")
+        }
+    }
+    
+    var color: Color {
+        switch self {
+        case .earnDots(let double), .earnTriangles(let double), .earnHexagons(let double):
+            if double < 100 {
+                return .white
+            } else {
+                return .orange
+            }
+        }
+    }
+    
+    var id: String {
+        switch self {
+        case let .earnDots(double):
+            return "dots-\(double)"
+        case let .earnTriangles(double):
+            return "triangles-\(double)"
+        case let .earnHexagons(double):
+            return "hexagons-\(double)"
+        }
+    }
+    
 }

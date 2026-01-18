@@ -56,6 +56,7 @@ final class HexPrisonAssembly: AutoInitModuleAssembly {
         container.register(HexagonMapViewModel.self) { HexagonMapViewModel.make(resolver: $0) }
         container.register(UpgradeGridViewModel.self) { UpgradeGridViewModel.make(resolver: $0) }
         container.register(GameViewModel.self) { GameViewModel.make(resolver: $0) }
+        container.register(AchievementListViewModel.self) { AchievementListViewModel.make(resolver: $0) }
     }
 }
 

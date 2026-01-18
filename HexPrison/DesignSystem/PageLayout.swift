@@ -27,6 +27,7 @@ public struct PageLayout<TitleBar: View, Content: View, Footer: View>: View {
                     .frame(height: 24)
                 content()
             }
+            .background(Color.black)
             footer()
                 .padding(.horizontal, 16)
                 .padding(.vertical, 8)
