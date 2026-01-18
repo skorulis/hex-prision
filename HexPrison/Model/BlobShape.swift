@@ -11,6 +11,17 @@ enum BlobShape {
     
     // Any hexagon shape
     case hexagon
+    
+    var currency: Currency {
+        switch self {
+        case .none:
+            return .dot
+        case .triangle:
+            return .triangle
+        case .hexagon:
+            return .hexagon
+        }
+    }
 }
 
 extension BlobShape {

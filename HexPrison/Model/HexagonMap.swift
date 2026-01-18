@@ -51,6 +51,10 @@ struct HexagonMap {
         )
     }
     
+    func status(index: Hexagon.Index) -> Hexagon.Status {
+        statuses[index] ?? .normal
+    }
+    
     private func getType(index: Hexagon.Index) -> HexagonType {
         let hashRand = RandomNumberGeneratorWithSeed(seed: index.stableHashValue).next()
         let hashMod = hashRand % 100

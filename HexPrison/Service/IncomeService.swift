@@ -8,13 +8,15 @@ final class IncomeService {
     
     private let playerStore: PlayerStore
     private let mapStore: MapStore
+    private let statStore: StatStore
     
     private var timer: Timer?
     
     @Resolvable<BaseResolver>
-    init(playerStore: PlayerStore, mapStore: MapStore) {
+    init(playerStore: PlayerStore, mapStore: MapStore, statStore: StatStore) {
         self.playerStore = playerStore
         self.mapStore = mapStore
+        self.statStore = statStore
     }
 }
 
@@ -30,10 +32,12 @@ extension IncomeService {
         
         let squares = mapStore.map.getActive()
         var gainWallet = Wallet()
-        for square in squares {
-            gainWallet.add(currency: .dot, amount: 1)
+        for index in squares {
+            let status = mapStore.map.status(index: index)
+            gainWallet.add(currency: status.shape.currency, amount: 1)
         }
         
         playerStore.wallet.add(wallet: gainWallet)
+        statStore.totalEarnings.add(wallet: gainWallet)
     }
 }

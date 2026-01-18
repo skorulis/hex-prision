@@ -6,6 +6,10 @@ nonisolated enum Currency: Hashable, Codable {
     
     /// Base currency
     case dot
+    
+    case triangle
+    
+    case hexagon
 }
 
 struct Wallet: Codable {
