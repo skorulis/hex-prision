@@ -34,4 +34,8 @@ struct Wallet: Codable {
             add(currency: key, amount: value)
         }
     }
+    
+    var total: Double {
+        return balance.values.reduce(0, +)
+    }
 }
