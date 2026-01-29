@@ -10,6 +10,7 @@ public enum MainPath: CoordinatorPath {
     case game
     case upgrades
     case achievements
+    case wallet
     
     public var id: String {
         String(describing: self)
@@ -30,6 +31,9 @@ public struct MainPathRenderer: CoordinatorPathRenderer {
             UpgradeGridView(viewModel: coordinator.apply(resolver.upgradeGridViewModel()))
         case .achievements:
             AchievementListView(viewModel: coordinator.apply(resolver.achievementListViewModel()))
+        case .wallet:
+            EmptyView()
+            //WalletView(viewModel: coordinator.apply(resolver.walletViewModel()))
         }
     }
 }

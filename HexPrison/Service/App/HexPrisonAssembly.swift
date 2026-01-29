@@ -22,6 +22,7 @@ final class HexPrisonAssembly: AutoInitModuleAssembly {
             .inObjectScope(.container)
         
         container.register(MainPathRenderer.self) { MainPathRenderer(resolver: $0) }
+        container.register(ToastPathRenderer.self) { ToastPathRenderer(resolver: $0) }
         
         container.register(IncomeService.self) { IncomeService.make(resolver: $0) }
             .inObjectScope(.container)
@@ -55,11 +56,12 @@ final class HexPrisonAssembly: AutoInitModuleAssembly {
     
     @MainActor
     private func registerViewModels(container: Container<TargetResolver>) {
+        container.register(AchievementListViewModel.self) { AchievementListViewModel.make(resolver: $0) }
+        container.register(WalletViewModel.self) { WalletViewModel.make(resolver: $0) }
         container.register(ContentViewModel.self) { ContentViewModel.make(resolver: $0) }
         container.register(HexagonMapViewModel.self) { HexagonMapViewModel.make(resolver: $0) }
         container.register(UpgradeGridViewModel.self) { UpgradeGridViewModel.make(resolver: $0) }
         container.register(GameViewModel.self) { GameViewModel.make(resolver: $0) }
-        container.register(AchievementListViewModel.self) { AchievementListViewModel.make(resolver: $0) }
     }
 }
 

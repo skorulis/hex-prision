@@ -17,6 +17,7 @@ struct ContentView: View {
     var body: some View {
         CoordinatorView(coordinator: coordinator)
             .with(renderer: resolver!.mainPathRenderer())
+            .with(renderer: resolver!.toastPathRenderer())
             .with(overlay: .toast) { view in
                 AnyView(ToastPathWrapper { view })
             }
