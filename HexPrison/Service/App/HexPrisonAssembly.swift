@@ -29,6 +29,12 @@ final class HexPrisonAssembly: AutoInitModuleAssembly {
         
         container.register(AchievementService.self) { AchievementService.make(resolver: $0) }
             .inObjectScope(.container)
+        
+        container.register(NoiseGenerator.self) { _ in
+            NoiseGenerator()
+        }
+        .inObjectScope(.container)
+        
     }
     
     @MainActor

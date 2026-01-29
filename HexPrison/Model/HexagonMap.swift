@@ -5,6 +5,8 @@ import Foundation
 /// Container for the entire game map
 struct HexagonMap {
     
+    private let noise = NoiseGenerator()
+    
     private var statuses: [Hexagon.Index: Hexagon.Status] = [:]
     
     mutating func set(pulse: Bool, index: Hexagon.Index) {
@@ -56,15 +58,15 @@ struct HexagonMap {
     }
     
     private func getType(index: Hexagon.Index) -> HexagonType {
-        let hashRand = RandomNumberGeneratorWithSeed(seed: index.stableHashValue).next()
-        let hashMod = hashRand % 100
-        if hashMod == 44 {
+        let noi = noise.value(x: Double(index.column), y: Double(index.row))
+        
+        if noi >= 0.9 {
             return .permanent
-        } else if hashMod == 43 {
+        } else if noi >= 0.8 {
             return .clue
-        } else {
-            return .basic
         }
+        
+        return .basic
     }
     
     func getActive() -> [Hexagon.Index] {

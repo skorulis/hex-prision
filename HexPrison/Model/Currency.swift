@@ -1,8 +1,9 @@
 //Created by Alexander Skorulis on 4/1/2026.
 
 import Foundation
+import SwiftUI
 
-nonisolated enum Currency: Hashable, Codable {
+nonisolated enum Currency: Hashable, Codable, CaseIterable, Identifiable {
     
     /// Base currency
     case dot
@@ -10,6 +11,30 @@ nonisolated enum Currency: Hashable, Codable {
     case triangle
     
     case hexagon
+    
+    var id: Self { self }
+    
+    var text: String {
+        switch self {
+        case .dot:
+            return "Dot"
+        case .triangle:
+            return "Triangle"
+        case .hexagon:
+            return "Hexagon"
+        }
+    }
+    
+    var image: Image {
+        switch self {
+        case .dot:
+            return Image(systemName: "circle.fill")
+        case .triangle:
+            return Image(systemName: "triangle.fill")
+        case .hexagon:
+            return Image(systemName: "hexagon.fill")
+        }
+    }
 }
 
 struct Wallet: Codable {

@@ -22,9 +22,24 @@ struct GameView: View {
             }
             .ignoresSafeArea()
             
-            bottomButtons
+            overlay
         }
         .background(Color.black)
+    }
+    
+    private var overlay: some View {
+        VStack {
+            topButtons
+            Spacer()
+            bottomButtons
+        }
+    }
+    
+    private var topButtons: some View {
+        HStack {
+            Spacer()
+            WalletButton(wallet: viewModel.wallet)
+        }
     }
     
     private var bottomButtons: some View {

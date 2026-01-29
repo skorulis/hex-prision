@@ -15,18 +15,30 @@ import SwiftUI
     private var achievements: Set<Achievement> = []
     private var cancellables: Set<AnyCancellable> = []
     
+    private(set) var wallet: Wallet
+    
     @Resolvable<BaseResolver>
-    init(mapViewModel: HexagonMapViewModel, statStore: StatStore) {
+    init(
+        mapViewModel: HexagonMapViewModel,
+        playerStore: PlayerStore,
+        statStore: StatStore,
+    ) {
         self.mapViewModel = mapViewModel
+        self.wallet = playerStore.wallet
         
         self.achievements = statStore.achievements
         statStore.$achievements.sink { [unowned self] newValue in
-            let new = newValue.subtracting(self.achievements)
+            let newlyAdded = newValue.subtracting(self.achievements)
             self.achievements = newValue
             
-            for new in achievements {
+            for new in newlyAdded {
                 showToast(achievement: new)
             }
+        }
+        .store(in: &cancellables)
+        
+        playerStore.$wallet.sink { [unowned self] in
+            self.wallet = $0
         }
         .store(in: &cancellables)
     }
